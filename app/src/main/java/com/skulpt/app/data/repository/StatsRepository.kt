@@ -15,6 +15,10 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         val totalSetsCompleted: Int,
         val totalRepsCompleted: Int,
         val totalTimeSeconds: Long,
+        val timeTodaySeconds: Long,
+        val longestSessionTimeSeconds: Long,
+        val timeThisWeekSeconds: Long,
+        val timeThisMonthSeconds: Long,
         val currentStreak: Int,
         val longestStreak: Int,
         val workoutsThisWeek: Int,
@@ -45,15 +49,40 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         val weeklyActivity = calculateWeeklyActivity(sessions)
         
         val now = Calendar.getInstance()
-        val workoutsThisWeek = sessions.count { 
+        var timeTodaySeconds = 0L
+        var longestSessionTimeSeconds = 0L
+        var timeThisWeekSeconds = 0L
+        var timeThisMonthSeconds = 0L
+        
+        var workoutsThisWeek = 0
+        var workoutsThisMonth = 0
+        
+        sessions.forEach {
             val sessionCal = Calendar.getInstance().apply { timeInMillis = it.dateMillis }
-            sessionCal.get(Calendar.WEEK_OF_YEAR) == now.get(Calendar.WEEK_OF_YEAR) &&
-            sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
-        }
-        val workoutsThisMonth = sessions.count {
-            val sessionCal = Calendar.getInstance().apply { timeInMillis = it.dateMillis }
-            sessionCal.get(Calendar.MONTH) == now.get(Calendar.MONTH) &&
-            sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+            val dur = it.durationSeconds
+            
+            if (dur > longestSessionTimeSeconds) {
+                longestSessionTimeSeconds = dur
+            }
+            
+            val isToday = normalizeToDay(sessionCal.timeInMillis) == normalizeToDay(now.timeInMillis)
+            if (isToday) {
+                timeTodaySeconds += dur
+            }
+            
+            val isThisWeek = sessionCal.get(Calendar.WEEK_OF_YEAR) == now.get(Calendar.WEEK_OF_YEAR) &&
+                             sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+            if (isThisWeek) {
+                workoutsThisWeek++
+                timeThisWeekSeconds += dur
+            }
+            
+            val isThisMonth = sessionCal.get(Calendar.MONTH) == now.get(Calendar.MONTH) &&
+                              sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+            if (isThisMonth) {
+                workoutsThisMonth++
+                timeThisMonthSeconds += dur
+            }
         }
 
         // Consistency: % of scheduled days worked out in the last 30 days
@@ -69,6 +98,10 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
             totalSetsCompleted = totalSetsCompleted,
             totalRepsCompleted = totalRepsCompleted,
             totalTimeSeconds = totalTimeSeconds,
+            timeTodaySeconds = timeTodaySeconds,
+            longestSessionTimeSeconds = longestSessionTimeSeconds,
+            timeThisWeekSeconds = timeThisWeekSeconds,
+            timeThisMonthSeconds = timeThisMonthSeconds,
             currentStreak = currentStreak,
             longestStreak = longestStreak,
             workoutsThisWeek = workoutsThisWeek,

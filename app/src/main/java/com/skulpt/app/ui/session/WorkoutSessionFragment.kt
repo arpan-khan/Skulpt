@@ -193,12 +193,6 @@ class WorkoutSessionFragment : Fragment() {
                 showFinishDialog()
                 true
             }
-            com.skulpt.app.R.id.menu_edit_workout -> {
-                val intent = Intent(requireContext(), com.skulpt.app.ui.editor.WorkoutEditorActivity::class.java)
-                intent.putExtra(com.skulpt.app.ui.editor.WorkoutEditorActivity.EXTRA_DAY_ID, dayId)
-                startActivity(intent)
-                true
-            }
             com.skulpt.app.R.id.menu_reset_workout -> {
                 viewModel.resetSession()
                 true

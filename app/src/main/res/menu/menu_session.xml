@@ -6,11 +6,6 @@
         android:title="Finish Workout"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_edit_workout"
-        android:title="Edit Workout"
-        android:icon="@drawable/ic_edit"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menu_reset_workout"
         android:title="Reset"
         app:showAsAction="never" />

@@ -56,13 +56,23 @@ class StatsFragment : Fragment() {
 
             renderHeatmap(data.heatmapData)
 
-            // Recent sessions
             val sessionLines = data.recentSessions.take(10).joinToString("\n") { session ->
                 val dateStr = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
                     .format(Date(session.dateMillis))
                 "$dateStr — ${session.dayName} (${session.completedExercises}/${session.totalExercises})"
             }
             binding.tvRecentSessions.text = sessionLines.ifEmpty { "No sessions yet.\nStart your first workout!" }
+            
+            fun formatTime(seconds: Long): String {
+                val h = seconds / 3600
+                val m = (seconds % 3600) / 60
+                return if (h > 0) "${h}h ${m}m" else "${m}m"
+            }
+            
+            binding.tvTimeToday.text = formatTime(data.timeTodaySeconds)
+            binding.tvLongestSession.text = formatTime(data.longestSessionTimeSeconds)
+            binding.tvTimeThisWeek.text = formatTime(data.timeThisWeekSeconds)
+            binding.tvTimeThisMonth.text = formatTime(data.timeThisMonthSeconds)
             
             updateCharts(data)
         }
@@ -105,11 +115,13 @@ class StatsFragment : Fragment() {
     }
 
     private fun renderHeatmap(activeMap: Map<Long, Int>) {
-        binding.gridHeatmap.removeAllViews()
         val scrollView = binding.gridHeatmap.parent as android.view.View
         scrollView.post {
             val width = scrollView.width
             if (width == 0) return@post
+
+            // Clear and rebuild only when dimensions are known and we're ready to fill
+            binding.gridHeatmap.removeAllViews()
 
             val context = requireContext()
             val density = resources.displayMetrics.density
