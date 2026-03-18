@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/progress_webview"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        style="@style/Widget.Material3.LinearProgressIndicator"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:background="?attr/colorSurface">
+
+        <Button
+            android:id="@+id/btn_search_google"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Google"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btn_search_ddg"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="DDG"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btn_search_bing"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bing"
+            android:textSize="11sp" />
+
+        <ImageButton
+            android:id="@+id/btn_webview_reload"
+            android:layout_width="40dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Reload" />
+
+        <ImageButton
+            android:id="@+id/btn_open_external"
+            android:layout_width="40dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_share"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Open in Browser" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Long-press an image to select it"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <ScrollView
+        android:id="@+id/scroll_webview_status"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?attr/colorSurfaceVariant">
+        
+        <TextView
+            android:id="@+id/tv_webview_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Initializing search..."
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+    </ScrollView>
+
+    <WebView
+        android:id="@+id/webview_picker"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF" />
+</LinearLayout>

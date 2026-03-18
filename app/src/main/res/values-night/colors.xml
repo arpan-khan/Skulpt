@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night/Dark theme - Deep Charcoal & Lavender -->
+    <color name="md_theme_primary">#D0BCFF</color>
+    <color name="md_theme_onPrimary">#381E72</color>
+    <color name="md_theme_primaryContainer">#4F378B</color>
+    <color name="md_theme_onPrimaryContainer">#EADDFF</color>
+    
+    <color name="md_theme_background">#1A1A1C</color> <!-- Deep Charcoal -->
+    <color name="md_theme_onBackground">#E6E1E5</color>
+    <color name="md_theme_surface">#1A1A1C</color>
+    <color name="md_theme_onSurface">#E6E1E5</color>
+    <color name="md_theme_surfaceVariant">#2D2C2F</color>
+    <color name="md_theme_onSurfaceVariant">#CAC4D0</color>
+    <color name="md_theme_outline">#938F99</color>
+    
+    <color name="md_theme_secondary">#CCC2DC</color>
+    <color name="md_theme_onSecondary">#332D41</color>
+    <color name="md_theme_secondaryContainer">#4A4458</color>
+    <color name="md_theme_onSecondaryContainer">#E8DEF8</color>
+
+    <!-- Workout Day Accents (Dark Mode) -->
+    <color name="workout_accent_green">#1E2F1E</color> <!-- Even deeper green -->
+    <color name="workout_accent_orange">#3D261E</color> <!-- Deeper orange/brown -->
+    <color name="workout_accent_lavender">#2A2045</color>
+
+    <color name="stat_text_green">#A5D6A7</color> <!-- Light Green -->
+    <color name="stat_text_purple">#D0BCFF</color> <!-- Light Lavender -->
+</resources>

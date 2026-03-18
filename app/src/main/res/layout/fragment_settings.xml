@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Settings" android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Appearance -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="APPEARANCE" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Theme" android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_marginBottom="8dp" />
+                <RadioGroup android:id="@+id/radio_group_theme" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="horizontal">
+                    <RadioButton android:id="@+id/radio_system" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content" android:text="System" />
+                    <RadioButton android:id="@+id/radio_light" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content" android:text="Light" />
+                    <RadioButton android:id="@+id/radio_dark" android:layout_width="0dp"
+                        android:layout_weight="1" android:layout_height="wrap_content" android:text="Dark" />
+                </RadioGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Workout Behavior -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="WORKOUT" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Auto-scroll exercises" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/switch_auto_scroll"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Show exercise images" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/switch_show_images"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Rest Timer Duration" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <TextView android:id="@+id/tv_rest_timer_value" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="60s"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="?attr/colorPrimary" />
+                </LinearLayout>
+                <com.google.android.material.slider.Slider android:id="@+id/slider_rest_timer"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:valueFrom="15" android:valueTo="300" android:stepSize="15"
+                    android:value="60" style="@style/Widget.Material3.Slider" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Notifications -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="NOTIFICATIONS" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Daily Reminders" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/switch_reminders"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/layout_reminder_time" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="horizontal"
+                    android:gravity="center_vertical" android:layout_marginTop="12dp" android:visibility="gone">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Reminder time" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <TextView android:id="@+id/tv_reminder_time" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="8:00 AM"
+                        android:textColor="?attr/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/btn_set_reminder_time"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Change" android:layout_marginStart="8dp"
+                        style="@style/Widget.Material3.Button.TonalButton" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Media Settings -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="MEDIA" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Default Image Search Terms" android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_marginBottom="4dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Used when no custom image is set" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:alpha="0.7" android:layout_marginBottom="8dp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_default_query"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_default_query"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="e.g. workout, gym, exercise" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Advanced / WebView Settings -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="ADVANCED (WEBVIEW)" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                        android:text="Hardware Acceleration" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/switch_hw_accel"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Custom User Agent" android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_marginBottom="4dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Overrides browser identity. Leave empty for default." android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:alpha="0.7" android:layout_marginBottom="8dp" />
+                
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_user_agent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_user_agent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="true"
+                        android:inputType="textLongMessage"
+                        android:hint="Mozilla/5.0..." />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_reset_webview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Reset WebView Cache"
+                    app:icon="@drawable/ic_delete"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    app:iconTint="?attr/colorError"
+                    android:textColor="?attr/colorError" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Backup & Restore -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="BACKUP &amp; RESTORE" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Full App Backup" android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_marginBottom="4dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Saves or restores workouts, stats, and settings." android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:alpha="0.7" android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_export_backup"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Export Backup (.bak)"
+                    app:icon="@drawable/ic_export"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_marginBottom="8dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_import_backup"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Import Backup"
+                    app:icon="@drawable/ic_import"
+                    style="@style/Widget.Material3.Button.TonalButton" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Data -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="DATA" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            app:cardCornerRadius="28dp"
+app:cardElevation="0dp"
+app:strokeWidth="1dp"
+app:strokeColor="?attr/colorOutlineVariant"
+app:cardBackgroundColor="?attr/colorSurface">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_export"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Export Workout Schedule"
+                    app:icon="@drawable/ic_export"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_marginBottom="8dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_import"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Import Workout Schedule (File)"
+                    app:icon="@drawable/ic_import"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_marginBottom="8dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_import_json"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Import from JSON Text"
+                    app:icon="@drawable/ic_copy"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_marginBottom="8dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_reset_data"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Reset Session History"
+                    app:icon="@drawable/ic_delete"
+                    style="@style/Widget.Material3.Button.TonalButton" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- About -->
+        <TextView android:id="@+id/tv_about_app"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="About this app" android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textColor="?attr/colorPrimary" android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp" android:layout_gravity="center_horizontal"
+            android:background="?attr/selectableItemBackground" android:padding="8dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

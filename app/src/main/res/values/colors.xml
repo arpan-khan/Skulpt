@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material You Lavender & Charcoal Palette -->
+    <color name="md_theme_primary">#9279D1</color> <!-- Muted Lavender -->
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#E6E0F9</color>
+    <color name="md_theme_onPrimaryContainer">#1D0061</color>
+    
+    <color name="md_theme_secondary">#7A7585</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#F3EFFB</color>
+    <color name="md_theme_onSecondaryContainer">#1D1A22</color>
+    
+    <color name="md_theme_tertiary">#7D5260</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_onTertiaryContainer">#31111D</color>
+    
+    <color name="md_theme_background">#FDFBFF</color>
+    <color name="md_theme_onBackground">#1C1B1F</color>
+    <color name="md_theme_surface">#FDFBFF</color>
+    <color name="md_theme_onSurface">#1C1B1F</color>
+    <color name="md_theme_surfaceVariant">#E7E0EB</color>
+    <color name="md_theme_onSurfaceVariant">#49454E</color>
+    <color name="md_theme_outline">#7A757F</color>
+
+    <!-- Workout Day Accents -->
+    <color name="workout_accent_green">#E8F5E9</color>
+    <color name="workout_accent_orange">#FFF3E0</color>
+    <color name="workout_accent_lavender">#F3E5F5</color>
+    <!-- Stats Colors -->
+    <color name="stat_text_green">#2E7D32</color>
+    <color name="stat_text_purple">#6750A4</color>
+</resources>
