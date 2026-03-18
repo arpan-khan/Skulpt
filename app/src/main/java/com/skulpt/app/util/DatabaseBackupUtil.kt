@@ -18,7 +18,9 @@ object DatabaseBackupUtil {
         return withContext(Dispatchers.IO) {
             try {
                 // Force a WAL checkpoint to ensure all data is in the main database file
-                database.openHelper.writableDatabase.execSQL("PRAGMA wal_checkpoint(FULL)")
+                val cursor = database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)")
+                cursor.moveToFirst()
+                cursor.close()
                 
                 val dbPath = database.openHelper.readableDatabase.path
                 val dbFile = File(dbPath)
