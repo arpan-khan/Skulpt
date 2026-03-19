@@ -13,22 +13,49 @@
         app:navigationIcon="@drawable/ic_close"
         style="@style/Widget.Material3.Toolbar" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_day_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:hint="Session Name (e.g. Leg Day)"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        android:layout_marginTop="8dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_day_name"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_day_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textCapWords"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"
+            android:hint="Session Name (e.g. Leg Day)"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_day_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_day_color"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="?attr/colorOutline"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+            <View
+                android:id="@+id/view_day_color_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#6750A4" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_exercises"

@@ -28,5 +28,6 @@ data class Exercise(
     val orderIndex: Int = 0,
     val isCompleted: Boolean = false,
     val timerSeconds: Int = 0,    // 0 = no timer
+    val hexcolor: String = "#6750A4",
     val notes: String = ""
 )

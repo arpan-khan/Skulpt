@@ -58,8 +58,8 @@ class CustomDayFragment : Fragment() {
         }
 
         binding.fabAddExercise.setOnClickListener {
-            AddExerciseDialog(null) { name, sets, reps, _ ->
-                viewModel.addExercise(name, sets, reps)
+            AddExerciseDialog(null) { name, sets, reps, notes, timerSeconds ->
+                viewModel.addExercise(name, sets, reps, notes, timerSeconds)
             }.show(childFragmentManager, "AddCustomExercise")
         }
 

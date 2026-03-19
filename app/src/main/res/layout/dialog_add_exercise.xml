@@ -67,4 +67,20 @@
             android:inputType="textMultiLine"
             android:lines="2" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Timer (seconds, 0 for none)"
+        android:layout_marginTop="8dp"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="0" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>

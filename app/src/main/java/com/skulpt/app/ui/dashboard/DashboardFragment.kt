@@ -70,14 +70,8 @@ class DashboardFragment : Fragment() {
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
                 
-                // Locally swap items for immediate feedback
-                val currentDays = viewModel.allDaysWithExercises.value?.toMutableList() ?: return false
-                val movedItem = currentDays.removeAt(from)
-                currentDays.add(to, movedItem)
-                
-                // We don't update VM here yet because it's backed by Room and would trigger a DB write / refresh
-                // Instead we just update the adapter visually
-                adapter.notifyItemMoved(from, to)
+                // Update the adapter's internal list and notify movement
+                adapter.moveItem(from, to)
                 return true
             }
 

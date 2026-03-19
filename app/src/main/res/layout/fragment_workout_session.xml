@@ -1,211 +1,221 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <ScrollView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:fitsSystemWindows="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="250dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="?attr/colorSurface"
+            app:titleEnabled="false">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_hero"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_image_rounded"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_collapseMode="parallax" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:background="@drawable/gradient_overlay_hero"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="Workout"
                 app:navigationIcon="@drawable/ic_back"
-                app:layout_constraintTop_toTopOf="parent"
-                style="@style/Widget.Material3.Toolbar.OnSurface"
-                android:background="@android:color/transparent" />
+                app:layout_collapseMode="pin"
+                android:background="@android:color/transparent"
+                style="@style/Widget.Material3.Toolbar.OnSurface" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_header_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:layout_marginTop="-40dp"
+            android:background="@drawable/bg_bottom_sheet_rounded_top"
+            android:elevation="4dp"
+            app:layout_scrollFlags="scroll">
 
             <LinearLayout
-                android:id="@+id/layout_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp"
-                app:layout_constraintTop_toBottomOf="@+id/iv_hero"
-                android:layout_marginTop="-40dp"
-                android:background="@drawable/bg_bottom_sheet_rounded_top"
-                android:elevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                
+                <TextView
+                    android:id="@+id/tv_day_title"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    
-                    <TextView
-                        android:id="@+id/tv_day_title"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                        android:textStyle="bold"
-                        tools:text="Push Day" />
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textStyle="bold"
+                    tools:text="Push Day" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_edit_workout_header"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Edit"
-                        app:icon="@drawable/ic_edit"
-                        app:iconSize="18dp"
-                        android:paddingHorizontal="12dp"
-                        android:minWidth="0dp"
-                        android:minHeight="0dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_edit_workout_header"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical">
-
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/progress_bar"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="8dp"
-                        android:max="100"
-                        app:trackCornerRadius="4dp"
-                        style="@style/Widget.Material3.LinearProgressIndicator" />
-
-                    <TextView
-                        android:id="@+id/tv_progress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                        android:textStyle="bold"
-                        tools:text="0 / 8 exercises completed" />
-                </LinearLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:dividerColor="?attr/colorOutlineVariant" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="SESSION TIMER"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:letterSpacing="0.1" />
-
-                        <TextView
-                            android:id="@+id/tv_session_timer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00:00:00"
-                            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorPrimary" />
-                            
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Start timer to keep track"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:alpha="0.7"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_start_stop_workout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Start"
-                        app:icon="@drawable/ic_play"
-                        style="@style/Widget.Material3.Button" />
-                </LinearLayout>
-
+                    android:text="Edit"
+                    app:icon="@drawable/ic_edit"
+                    app:iconSize="18dp"
+                    android:paddingHorizontal="12dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_exercises"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingBottom="100dp"
-                app:layout_constraintTop_toBottomOf="@id/layout_header"
-                app:layout_constraintBottom_toTopOf="@+id/card_all_done" />
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_all_done"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:layout_constraintTop_toBottomOf="@id/recycler_exercises"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progress_bar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    app:trackCornerRadius="4dp"
+                    style="@style/Widget.Material3.LinearProgressIndicator" />
 
                 <TextView
-                    android:id="@+id/tv_all_done"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_progress"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All done! Great workout!"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                    android:padding="24dp"
-                    android:textColor="?attr/colorPrimary" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginStart="16dp"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:textStyle="bold"
+                    tools:text="0 / 8 exercises completed" />
+            </LinearLayout>
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        <!-- STICKY TIMER TAB -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layout_sticky_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="0dp"
+            app:strokeWidth="0dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SESSION TIMER"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:letterSpacing="0.1" />
+
+                    <TextView
+                        android:id="@+id/tv_session_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00:00"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorPrimary" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_start_stop_workout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start"
+                    app:icon="@drawable/ic_play"
+                    style="@style/Widget.Material3.Button" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_finish_workout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Finish"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_check"
+                    style="@style/Widget.Material3.Button"
+                    app:backgroundTint="#2E7D32"
+                    android:textColor="@android:color/white"
+                    app:iconTint="@android:color/white"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_exercises"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_all_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <TextView
+            android:id="@+id/tv_all_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All done! Great workout!"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:padding="24dp"
+            android:textColor="?attr/colorPrimary" />
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Rest Timer"
-        app:srcCompat="@drawable/ic_timer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:contentDescription="Rest/Interval Timer"
+        app:srcCompat="@drawable/ic_timer" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

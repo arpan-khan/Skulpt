@@ -22,8 +22,16 @@ class DayCardAdapter(
 
     fun submitDays(newDays: List<DayWithExercises>) {
         val diffResult = DiffUtil.calculateDiff(DayDiffCallback(days, newDays))
-        days = newDays
+        days = newDays.toList()
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun moveItem(from: Int, to: Int) {
+        val mutableList = days.toMutableList()
+        val movedItem = mutableList.removeAt(from)
+        mutableList.add(to, movedItem)
+        days = mutableList
+        notifyItemMoved(from, to)
     }
 
     fun getDays(): List<DayWithExercises> = days

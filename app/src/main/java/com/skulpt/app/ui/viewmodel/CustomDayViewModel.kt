@@ -27,7 +27,7 @@ class CustomDayViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var idCounter = -1L  // negative IDs = in-memory only
 
-    fun addExercise(name: String, sets: Int, reps: Int) {
+    fun addExercise(name: String, sets: Int, reps: Int, notes: String = "", timerSeconds: Int = 0) {
         val current = _exercises.value?.toMutableList() ?: mutableListOf()
         val exercise = Exercise(
             id = idCounter--,
@@ -35,7 +35,9 @@ class CustomDayViewModel(application: Application) : AndroidViewModel(applicatio
             name = name,
             sets = sets,
             reps = reps,
-            orderIndex = current.size
+            orderIndex = current.size,
+            notes = notes,
+            timerSeconds = timerSeconds
         )
         current.add(exercise)
         _exercises.value = current

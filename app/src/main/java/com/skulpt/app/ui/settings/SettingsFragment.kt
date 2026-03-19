@@ -1,5 +1,9 @@
 package com.skulpt.app.ui.settings
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.content.ContextCompat
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -34,6 +38,8 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModels()
     private var currentSettings: AppSettings = AppSettings()
+    private var isBinding = true
+    private var hasInitialLoad = false
 
     private val importLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -48,6 +54,17 @@ class SettingsFragment : Fragment() {
                     Toast.makeText(requireContext(), "Import failed. Check file format.", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            NotificationHelper.scheduleReminder(requireContext(), currentSettings)
+        } else {
+            Toast.makeText(requireContext(), "Permission denied. Reminders won't work.", Toast.LENGTH_SHORT).show()
+            binding.switchReminders.isChecked = false
         }
     }
 
@@ -97,15 +114,21 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.settings.observe(viewLifecycleOwner) { settings ->
-            settings ?: return@observe
-            currentSettings = settings
-            bindSettings(settings)
+            if (settings != null) {
+                currentSettings = settings
+                bindSettings(settings)
+                hasInitialLoad = true
+                isBinding = false
+            } else {
+                isBinding = false
+            }
         }
 
         setupListeners()
     }
 
     private fun bindSettings(s: AppSettings) {
+        isBinding = true
         // Theme
         binding.radioGroupTheme.setOnCheckedChangeListener(null)
         binding.radioGroupTheme.check(
@@ -132,15 +155,21 @@ class SettingsFragment : Fragment() {
             if (s.remindersEnabled) View.VISIBLE else View.GONE
 
         // Media
-        binding.etDefaultQuery.setText(s.defaultImageQuery)
+        if (!binding.etDefaultQuery.hasFocus() && binding.etDefaultQuery.text.toString() != s.defaultImageQuery) {
+            binding.etDefaultQuery.setText(s.defaultImageQuery)
+        }
 
         // Advanced
         binding.switchHwAccel.isChecked = s.webViewHardwareAcceleration
-        binding.etUserAgent.setText(s.customUserAgent)
+        if (!binding.etUserAgent.hasFocus() && binding.etUserAgent.text.toString() != s.customUserAgent) {
+            binding.etUserAgent.setText(s.customUserAgent)
+        }
+        isBinding = false
     }
 
     private fun setupThemeListener() {
         binding.radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
+            if (isBinding) return@setOnCheckedChangeListener
             val mode = when (checkedId) {
                 com.skulpt.app.R.id.radio_light -> 1
                 com.skulpt.app.R.id.radio_dark -> 2
@@ -148,7 +177,7 @@ class SettingsFragment : Fragment() {
             }
             if (mode != currentSettings.themeMode) {
                 currentSettings = currentSettings.copy(themeMode = mode)
-                viewModel.saveSettings(currentSettings)
+                if (!isBinding) viewModel.saveSettings(currentSettings)
 
                 when (mode) {
                     1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -172,27 +201,35 @@ class SettingsFragment : Fragment() {
         }
 
         binding.switchAutoScroll.setOnCheckedChangeListener { _, checked ->
+            if (isBinding) return@setOnCheckedChangeListener
             currentSettings = currentSettings.copy(autoScrollExercises = checked)
             viewModel.saveSettings(currentSettings)
         }
 
         binding.switchShowImages.setOnCheckedChangeListener { _, checked ->
+            if (isBinding) return@setOnCheckedChangeListener
             currentSettings = currentSettings.copy(showExerciseImages = checked)
             viewModel.saveSettings(currentSettings)
         }
 
         binding.switchReminders.setOnCheckedChangeListener { _, checked ->
+            if (isBinding) return@setOnCheckedChangeListener
             currentSettings = currentSettings.copy(remindersEnabled = checked)
             viewModel.saveSettings(currentSettings)
             binding.layoutReminderTime.visibility = if (checked) View.VISIBLE else View.GONE
             if (checked) {
-                NotificationHelper.scheduleReminder(requireContext(), currentSettings)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    NotificationHelper.scheduleReminder(requireContext(), currentSettings)
+                }
             } else {
                 NotificationHelper.cancelReminder(requireContext())
             }
         }
 
         binding.etDefaultQuery.doAfterTextChanged { text ->
+            if (isBinding) return@doAfterTextChanged
             val query = text?.toString() ?: ""
             if (query != currentSettings.defaultImageQuery) {
                 currentSettings = currentSettings.copy(defaultImageQuery = query)
@@ -201,11 +238,13 @@ class SettingsFragment : Fragment() {
         }
 
         binding.switchHwAccel.setOnCheckedChangeListener { _, checked ->
+            if (isBinding) return@setOnCheckedChangeListener
             currentSettings = currentSettings.copy(webViewHardwareAcceleration = checked)
             viewModel.saveSettings(currentSettings)
         }
 
         binding.etUserAgent.doAfterTextChanged { text ->
+            if (isBinding) return@doAfterTextChanged
             val ua = text?.toString() ?: ""
             if (ua != currentSettings.customUserAgent) {
                 currentSettings = currentSettings.copy(customUserAgent = ua)

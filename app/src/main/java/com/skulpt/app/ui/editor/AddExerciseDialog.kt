@@ -11,7 +11,7 @@ import com.skulpt.app.databinding.DialogAddExerciseBinding
 
 class AddExerciseDialog(
     private val existingExercise: Exercise?,
-    private val onConfirm: (name: String, sets: Int, reps: Int, notes: String) -> Unit
+    private val onConfirm: (name: String, sets: Int, reps: Int, notes: String, timerSeconds: Int) -> Unit
 ) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -22,6 +22,8 @@ class AddExerciseDialog(
             binding.etSets.setText(ex.sets.toString())
             binding.etReps.setText(ex.reps.toString())
             binding.etNotes.setText(ex.notes)
+            binding.etTimer.setText(ex.timerSeconds.toString())
+            
         }
 
         val title = if (existingExercise != null) "Edit Exercise" else "Add Exercise"
@@ -40,6 +42,7 @@ class AddExerciseDialog(
                 val sets = binding.etSets.text.toString().toIntOrNull() ?: 3
                 val reps = binding.etReps.text.toString().toIntOrNull() ?: 10
                 val notes = binding.etNotes.text.toString().trim()
+                val timerSeconds = binding.etTimer.text.toString().toIntOrNull() ?: 0
 
                 if (name.isEmpty()) {
                     binding.tilName.error = "Name is required"
@@ -54,7 +57,7 @@ class AddExerciseDialog(
                     return@setOnClickListener
                 }
 
-                onConfirm(name, sets, reps, notes)
+                onConfirm(name, sets, reps, notes, timerSeconds)
                 dialog.dismiss()
             }
         }

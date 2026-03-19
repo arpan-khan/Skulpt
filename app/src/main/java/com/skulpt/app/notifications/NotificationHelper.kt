@@ -45,7 +45,7 @@ object NotificationHelper {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.skulpticon)
             .setContentTitle("Time to Sculpt!")
             .setContentText("Your workout is waiting. Let's crush it today!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -28,6 +28,9 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
     private val _defaultImageQuery = MutableLiveData<String>()
     val defaultImageQuery: LiveData<String> = _defaultImageQuery
 
+    private val _dayColor = MutableLiveData<String>()
+    val dayColor: LiveData<String> = _dayColor
+
     fun loadDay(dayId: Long) {
         this.dayId = dayId
         viewModelScope.launch {
@@ -36,11 +39,12 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
             
             val dayWithExercises = repository.getDayWithExercises(dayId)
             _dayName.postValue(dayWithExercises?.day?.name ?: "")
+            _dayColor.postValue(dayWithExercises?.day?.colorHex ?: "#6750A4")
             _exercises.postValue(dayWithExercises?.exercises?.sortedBy { it.orderIndex } ?: emptyList())
         }
     }
 
-    fun addExercise(name: String, sets: Int, reps: Int, notes: String = "") {
+    fun addExercise(name: String, sets: Int, reps: Int, notes: String = "", timerSeconds: Int = 0) {
         viewModelScope.launch {
             val currentList = _exercises.value ?: emptyList()
             val newOrder = currentList.size
@@ -50,6 +54,7 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
                 sets = sets,
                 reps = reps,
                 orderIndex = newOrder,
+                timerSeconds = timerSeconds,
                 notes = notes
             )
             val id = repository.insertExercise(exercise)
@@ -122,8 +127,20 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
     fun updateDayName(newName: String) {
         viewModelScope.launch {
             val day = repository.getDayWithExercises(dayId)?.day ?: return@launch
-            repository.updateDay(day.copy(name = newName))
-            _dayName.postValue(newName)
+            if (day.name != newName) {
+                repository.updateDay(day.copy(name = newName))
+                _dayName.postValue(newName)
+            }
+        }
+    }
+
+    fun updateDayColor(newColor: String) {
+        viewModelScope.launch {
+            val day = repository.getDayWithExercises(dayId)?.day ?: return@launch
+            if (day.colorHex != newColor) {
+                repository.updateDay(day.copy(colorHex = newColor))
+                _dayColor.postValue(newColor)
+            }
         }
     }
 

@@ -38,10 +38,12 @@ class RestTimerBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val argsTimer = arguments?.getInt("START_SECONDS", -1) ?: -1
+        
         // Load saved timer duration
         CoroutineScope(Dispatchers.IO).launch {
             val settings = SkulptApplication.instance.database.appSettingsDao().getSettings()
-            totalSeconds = settings?.restTimerSeconds ?: 60
+            totalSeconds = if (argsTimer > 0) argsTimer else (settings?.restTimerSeconds ?: 60)
             withContext(Dispatchers.Main) {
                 updateTimerDisplay(totalSeconds.toLong())
                 binding.progressTimer.max = totalSeconds
@@ -135,12 +137,16 @@ class RestTimerBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun vibrate() {
-        val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-            ?: return
+        val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val vibratorManager = requireContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? android.os.VibratorManager
+            vibratorManager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            requireContext().getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        } ?: return
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createWaveform(longArrayOf(0, 300, 200, 300), -1)
-            )
+            vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 200, 300), -1))
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(longArrayOf(0, 300, 200, 300), -1)

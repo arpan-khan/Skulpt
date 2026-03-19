@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,7 +80,7 @@ app:cardBackgroundColor="?attr/colorSurface">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical">
                     <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
-                        android:text="Rest Timer Duration" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                        android:text="Rest/Interval Timer Duration" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
                     <TextView android:id="@+id/tv_rest_timer_value" android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:text="60s"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"

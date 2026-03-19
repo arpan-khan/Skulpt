@@ -18,11 +18,20 @@ import com.skulpt.app.util.PlaceholderUtil
 
 class ExerciseCardAdapter(
     private val onCheckToggle: (Exercise) -> Unit,
-    private val onImageClick: (Exercise) -> Unit
+    private val onImageClick: (Exercise) -> Unit,
+    private val onTimerClick: (Exercise) -> Unit
 ) : RecyclerView.Adapter<ExerciseCardAdapter.ExerciseViewHolder>() {
 
     private var exercises: List<Exercise> = emptyList()
     private var baseQuery: String = "workout,exercise"
+    private var showImages: Boolean = true
+
+    fun setShowImages(show: Boolean) {
+        if (showImages != show) {
+            showImages = show
+            notifyDataSetChanged()
+        }
+    }
 
     fun setBaseQuery(query: String) {
         if (baseQuery != query) {
@@ -71,18 +80,33 @@ class ExerciseCardAdapter(
                 binding.checkBox.isChecked = false
             }
 
+            // Accent Color (Text)
+            try {
+                val colorInt = android.graphics.Color.parseColor(exercise.hexcolor)
+                binding.tvExerciseName.setTextColor(colorInt)
+            } catch (e: Exception) {
+                // Default color if parsing fails
+                binding.tvExerciseName.setTextColor(
+                    com.google.android.material.color.MaterialColors.getColor(binding.tvExerciseName, com.google.android.material.R.attr.colorOnSurface)
+                )
+            }
+
             // Image
             val imageUri = exercise.imageUri
             val displayImage = if (!imageUri.isNullOrEmpty()) imageUri else PlaceholderUtil.getDynamicImageUrl(exercise.name, baseQuery)
 
-            Glide.with(binding.ivExercise.context)
-                .load(displayImage)
-                .placeholder(PlaceholderUtil.getPlaceholderDrawable(binding.root.context, exercise.name))
-                .error(PlaceholderUtil.getPlaceholderDrawable(binding.root.context, exercise.name))
-                .centerCrop()
-                .into(binding.ivExercise)
+            if (showImages) {
+                binding.ivExercise.visibility = View.VISIBLE
+                Glide.with(binding.ivExercise.context)
+                    .load(displayImage)
+                    .placeholder(PlaceholderUtil.getPlaceholderDrawable(binding.root.context, exercise.name))
+                    .error(PlaceholderUtil.getPlaceholderDrawable(binding.root.context, exercise.name))
+                    .centerCrop()
+                    .into(binding.ivExercise)
+            } else {
+                binding.ivExercise.visibility = View.GONE
+            }
 
-            binding.ivExercise.visibility = View.VISIBLE
             binding.ivExercise.setOnClickListener { onImageClick(exercise) }
 
             // Timer indicator
@@ -90,6 +114,11 @@ class ExerciseCardAdapter(
                 if (exercise.timerSeconds > 0) View.VISIBLE else View.GONE
             if (exercise.timerSeconds > 0) {
                 binding.tvTimer.text = "${exercise.timerSeconds}s rest"
+            }
+            binding.tvTimer.setOnClickListener {
+                if (exercise.timerSeconds > 0) {
+                    onTimerClick(exercise)
+                }
             }
 
             // Staggered entrance animation

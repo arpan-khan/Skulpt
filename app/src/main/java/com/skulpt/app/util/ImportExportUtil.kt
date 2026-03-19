@@ -40,7 +40,8 @@ data class ExportExercise(
     @SerializedName("reps") val reps: Int,
     @SerializedName("orderIndex") val orderIndex: Int,
     @SerializedName("notes") val notes: String,
-    @SerializedName("timerSeconds") val timerSeconds: Int
+    @SerializedName("timerSeconds") val timerSeconds: Int,
+    @SerializedName("hexcolor") val hexcolor: String = "#6750A4"
 )
 
 object ImportExportUtil {
@@ -75,7 +76,8 @@ object ImportExportUtil {
                                         reps = ex.reps,
                                         orderIndex = ex.orderIndex,
                                         notes = ex.notes,
-                                        timerSeconds = ex.timerSeconds
+                                        timerSeconds = ex.timerSeconds,
+                                        hexcolor = ex.hexcolor
                                     )
                                 }
                         )
@@ -147,7 +149,8 @@ object ImportExportUtil {
                             reps = ex.reps,
                             orderIndex = ex.orderIndex.takeIf { it >= 0 } ?: idx,
                             notes = ex.notes,
-                            timerSeconds = ex.timerSeconds
+                            timerSeconds = ex.timerSeconds,
+                            hexcolor = ex.hexcolor
                         )
                     }
                     exerciseDao.insertExercises(exercises)

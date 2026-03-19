@@ -98,8 +98,8 @@ class WorkoutEditorActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                val from = viewHolder.adapterPosition
-                val to = target.adapterPosition
+                val from = viewHolder.bindingAdapterPosition
+                val to = target.bindingAdapterPosition
                 
                 // Locally swap items in the adapter's list for immediate visual feedback
                 val list = adapter.currentList.toMutableList()
@@ -143,21 +143,31 @@ class WorkoutEditorActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.dayColor.observe(this) { color ->
+            try {
+                binding.viewDayColorIndicator.setBackgroundColor(android.graphics.Color.parseColor(color))
+            } catch (e: Exception) { }
+        }
+
+        binding.cvDayColor.setOnClickListener {
+            showDayColorPicker()
+        }
+
         binding.fabAddExercise.setOnClickListener {
             showAddExerciseDialog()
         }
     }
 
     private fun showAddExerciseDialog() {
-        AddExerciseDialog(null) { name, sets, reps, notes ->
-            viewModel.addExercise(name, sets, reps, notes)
+        AddExerciseDialog(null) { name, sets, reps, notes, timerSeconds ->
+            viewModel.addExercise(name, sets, reps, notes, timerSeconds)
         }.show(supportFragmentManager, "AddExercise")
     }
 
     private fun showEditDialog(exercise: com.skulpt.app.data.model.Exercise) {
-        AddExerciseDialog(exercise) { name, sets, reps, notes ->
+        AddExerciseDialog(exercise) { name, sets, reps, notes, timerSeconds ->
             viewModel.updateExercise(
-                exercise.copy(name = name, sets = sets, reps = reps, notes = notes)
+                exercise.copy(name = name, sets = sets, reps = reps, notes = notes, timerSeconds = timerSeconds)
             )
         }.show(supportFragmentManager, "EditExercise")
     }
@@ -251,6 +261,26 @@ class WorkoutEditorActivity : AppCompatActivity() {
                 Toast.makeText(this, "${commonExercises[which]} added", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun showDayColorPicker() {
+        val colors = arrayOf(
+            "#6750A4", // Default Purple
+            "#B00020", // Red
+            "#388E3C", // Green
+            "#1976D2", // Blue
+            "#FBC02D", // Yellow
+            "#E64A19", // Orange
+            "#7B1FA2", // Deep Purple
+            "#00796B"  // Teal
+        )
+        val colorNames = arrayOf("Default", "Red", "Green", "Blue", "Yellow", "Orange", "Deep Purple", "Teal")
+
+        AlertDialog.Builder(this)
+            .setTitle("Pick Session Color")
+            .setItems(colorNames) { _, which ->
+                viewModel.updateDayColor(colors[which])
+            }
             .show()
     }
 }

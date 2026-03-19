@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [WorkoutDay::class, Exercise::class, WorkoutSession::class, AppSettings::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class SkulptDatabase : RoomDatabase() {
@@ -41,10 +41,17 @@ abstract class SkulptDatabase : RoomDatabase() {
                     "skulpt_database"
                 )
                     .addCallback(DatabaseCallback())
+                    .addMigrations(MIGRATION_4_5)
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
+            }
+        }
+
+        val MIGRATION_4_5 = object : androidx.room.migration.Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE exercises ADD COLUMN hexcolor TEXT NOT NULL DEFAULT '#6750A4'")
             }
         }
     }

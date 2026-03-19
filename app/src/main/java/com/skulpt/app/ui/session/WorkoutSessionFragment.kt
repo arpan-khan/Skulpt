@@ -37,6 +37,7 @@ class WorkoutSessionFragment : Fragment() {
     private var heroRotationJob: Job? = null
     private var currentHeroIndex = 0
     private var dayId: Long = -1L
+    private var autoScrollEnabled = true
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -73,9 +74,27 @@ class WorkoutSessionFragment : Fragment() {
         adapter = ExerciseCardAdapter(
             onCheckToggle = { exercise ->
                 viewModel.toggleExercise(exercise)
+                // Auto scroll logic
+                if (autoScrollEnabled && !exercise.isCompleted) {
+                    val currentList = viewModel.dayWithExercises.value?.exercises?.sortedBy { it.orderIndex }
+                    if (currentList != null) {
+                        val index = currentList.indexOfFirst { it.id == exercise.id }
+                        if (index != -1 && index + 1 < currentList.size) {
+                            binding.recyclerExercises.postDelayed({
+                                binding.recyclerExercises.smoothScrollToPosition(index + 1)
+                            }, 300)
+                        }
+                    }
+                }
             },
             onImageClick = { exercise ->
                 showImageActions(exercise)
+            },
+            onTimerClick = { exercise ->
+                val bottomSheet = RestTimerBottomSheet().apply {
+                    arguments = Bundle().apply { putInt("START_SECONDS", exercise.timerSeconds) }
+                }
+                bottomSheet.show(childFragmentManager, "RestTimer")
             }
         )
 
@@ -116,12 +135,14 @@ class WorkoutSessionFragment : Fragment() {
                 binding.cardAllDone.visibility = View.GONE
             }
 
-            startHeroRotation(dayWithEx.exercises, dayWithEx.day.name)
+            startHeroRotation(dayWithEx.exercises)
         }
 
         viewModel.settings.observe(viewLifecycleOwner) { settings ->
             settings ?: return@observe
             adapter.setBaseQuery(settings.defaultImageQuery)
+            adapter.setShowImages(settings.showExerciseImages)
+            autoScrollEnabled = settings.autoScrollExercises
         }
 
         viewModel.sessionSaved.observe(viewLifecycleOwner) { saved ->
@@ -152,19 +173,28 @@ class WorkoutSessionFragment : Fragment() {
 
         binding.btnStartStopWorkout.setOnClickListener {
             if (viewModel.isSessionActive.value == true) {
-                showFinishDialog()
+                // Just stop the timer, don't finish
+                viewModel.stopSession()
             } else {
                 showStartOptions()
             }
         }
 
+        binding.btnFinishWorkout.setOnClickListener {
+            showFinishDialog()
+        }
+
         viewModel.isSessionActive.observe(viewLifecycleOwner) { active ->
             if (active) {
-                binding.btnStartStopWorkout.text = "Stop"
+                binding.btnStartStopWorkout.text = "Pause"
                 binding.btnStartStopWorkout.setIconResource(com.skulpt.app.R.drawable.ic_stop)
+                binding.btnFinishWorkout.visibility = View.VISIBLE
             } else {
                 binding.btnStartStopWorkout.text = "Start"
                 binding.btnStartStopWorkout.setIconResource(com.skulpt.app.R.drawable.ic_play)
+                // If elapsed time > 0, we can still show finish
+                val hasProgress = (viewModel.elapsedTimeSeconds.value ?: 0) > 0
+                binding.btnFinishWorkout.visibility = if (hasProgress) View.VISIBLE else View.GONE
             }
         }
 
@@ -189,10 +219,6 @@ class WorkoutSessionFragment : Fragment() {
 
     private fun handleMenuItem(item: MenuItem): Boolean {
         return when (item.itemId) {
-            com.skulpt.app.R.id.menu_finish_workout -> {
-                showFinishDialog()
-                true
-            }
             com.skulpt.app.R.id.menu_reset_workout -> {
                 viewModel.resetSession()
                 true
@@ -284,14 +310,14 @@ class WorkoutSessionFragment : Fragment() {
 
     // Removed showSearchResultsDialog as it's merged into showInternetSearchDialog
 
-    private fun startHeroRotation(exercises: List<Exercise>, dayName: String) {
+    private fun startHeroRotation(exercises: List<Exercise>) {
         heroRotationJob?.cancel()
         if (exercises.isEmpty()) return
 
         val imageUrls = exercises.map { ex ->
-            if (!ex.imageUri.isNullOrEmpty()) ex.imageUri!!
+            if (!ex.imageUri.isNullOrEmpty()) ex.imageUri
             else com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(ex.name, viewModel.settings.value?.defaultImageQuery ?: "")
-        }.distinct()
+        }.filterNotNull().distinct()
 
         if (imageUrls.size <= 1) return
 
