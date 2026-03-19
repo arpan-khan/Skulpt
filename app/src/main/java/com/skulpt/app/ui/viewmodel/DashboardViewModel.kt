@@ -59,4 +59,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    fun resetAllWorkoutProgress() {
+        viewModelScope.launch {
+            repository.resetAllWorkoutProgress()
+        }
+    }
 }

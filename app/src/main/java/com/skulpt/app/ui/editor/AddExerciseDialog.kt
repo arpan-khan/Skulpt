@@ -3,7 +3,7 @@ package com.skulpt.app.ui.editor
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import com.skulpt.app.data.model.Exercise
@@ -28,7 +28,7 @@ class AddExerciseDialog(
 
         val title = if (existingExercise != null) "Edit Exercise" else "Add Exercise"
 
-        val dialog = AlertDialog.Builder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setView(binding.root)
             .setPositiveButton("Save", null) // set in onStart to access button
@@ -36,7 +36,7 @@ class AddExerciseDialog(
             .create()
 
         dialog.setOnShowListener {
-            val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val btn = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
             btn.setOnClickListener {
                 val name = binding.etName.text.toString().trim()
                 val sets = binding.etSets.text.toString().toIntOrNull() ?: 3

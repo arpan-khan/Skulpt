@@ -37,6 +37,9 @@ interface ExerciseDao {
     @Query("UPDATE exercises SET isCompleted = 0 WHERE dayId = :dayId")
     suspend fun resetCompletionForDay(dayId: Long)
 
+    @Query("UPDATE exercises SET isCompleted = 0")
+    suspend fun resetAllCompletion()
+
     @Query("UPDATE exercises SET orderIndex = :orderIndex WHERE id = :exerciseId")
     suspend fun updateOrderIndex(exerciseId: Long, orderIndex: Int)
 

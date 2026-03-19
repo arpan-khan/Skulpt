@@ -25,13 +25,15 @@ class WebViewSearchDialogFragment : DialogFragment() {
         const val REQUEST_KEY = "webview_search_request"
         const val RESULT_IMAGE_URL = "result_image_url"
         private const val ARG_QUERY = "arg_query"
+        private const val ARG_BASE_QUERY = "arg_base_query"
         private const val ARG_HW_ACCEL = "arg_hw_accel"
         private const val ARG_UA = "arg_ua"
 
-        fun newInstance(query: String, hwAccel: Boolean, ua: String): WebViewSearchDialogFragment {
+        fun newInstance(query: String, baseQuery: String?, hwAccel: Boolean, ua: String): WebViewSearchDialogFragment {
             return WebViewSearchDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_QUERY to query,
+                    ARG_BASE_QUERY to baseQuery,
                     ARG_HW_ACCEL to hwAccel,
                     ARG_UA to ua
                 )
@@ -160,12 +162,17 @@ class WebViewSearchDialogFragment : DialogFragment() {
     }
 
     private fun loadSearch(provider: String, queryOverride: String? = null) {
-        val baseQuery = queryOverride ?: arguments?.getString(ARG_QUERY) ?: ""
-        val query = baseQuery.replace(" ", "+")
+        val baseQueryArg = queryOverride ?: arguments?.getString(ARG_QUERY) ?: ""
+        val userBaseQuery = arguments?.getString(ARG_BASE_QUERY)
+        val suffix = if (userBaseQuery.isNullOrBlank()) "workout" else userBaseQuery.trim()
+        
+        val query = baseQueryArg.replace(" ", "+")
+        val suffixEncoded = suffix.replace(" ", "+")
+        
         val url = when (provider) {
-            "Google" -> "https://www.google.com/search?q=$query+workout&tbm=isch"
-            "DDG" -> "https://duckduckgo.com/?q=$query+workout&iax=images&ia=images"
-            "Bing" -> "https://www.bing.com/images/search?q=$query+workout"
+            "Google" -> "https://www.google.com/search?q=$query+$suffixEncoded&tbm=isch"
+            "DDG" -> "https://duckduckgo.com/?q=$query+$suffixEncoded&iax=images&ia=images"
+            "Bing" -> "https://www.bing.com/images/search?q=$query+$suffixEncoded"
             else -> ""
         }
         if (url.isNotEmpty()) {

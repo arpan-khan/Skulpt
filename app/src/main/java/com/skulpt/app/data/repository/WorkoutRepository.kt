@@ -57,6 +57,9 @@ class WorkoutRepository(
     suspend fun resetDayCompletion(dayId: Long) =
         exerciseDao.resetCompletionForDay(dayId)
 
+    suspend fun resetAllWorkoutProgress() =
+        exerciseDao.resetAllCompletion()
+
     suspend fun updateExerciseOrder(exerciseId: Long, orderIndex: Int) =
         exerciseDao.updateOrderIndex(exerciseId, orderIndex)
 

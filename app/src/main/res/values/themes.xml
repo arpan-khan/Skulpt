@@ -24,6 +24,12 @@
         
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="materialAlertDialogTheme">@style/Theme.Skulpt.AlertDialog</item>
+    </style>
+
+    <style name="Theme.Skulpt.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearance">@style/ShapeAppearance.Skulpt.Large</item>
     </style>
 
     <style name="ShapeAppearance.Skulpt.Large" parent="ShapeAppearance.Material3.LargeComponent">

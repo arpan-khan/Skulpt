@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import android.webkit.*
@@ -119,7 +119,8 @@ class WorkoutSessionFragment : Fragment() {
             // Bind hero image based on first exercise or general query
             val firstExercise = dayWithEx.exercises.sortedBy { it.orderIndex }.firstOrNull()
             val heroQuery = firstExercise?.name ?: dayWithEx.day.name
-            val heroUrl = com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(heroQuery)
+            val baseQuery = viewModel.settings.value?.defaultImageQuery
+            val heroUrl = com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(heroQuery, baseQuery)
             
             com.bumptech.glide.Glide.with(this)
                 .load(heroUrl)
@@ -233,7 +234,7 @@ class WorkoutSessionFragment : Fragment() {
             options.add("Delete Custom Image")
         }
 
-        AlertDialog.Builder(requireContext())
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
             .setTitle(exercise.name)
             .setItems(options.toTypedArray()) { _, which ->
                 when (options[which]) {
@@ -274,7 +275,7 @@ class WorkoutSessionFragment : Fragment() {
         // Pause timer while dialog is shown
         viewModel.stopSession()
 
-        AlertDialog.Builder(requireContext())
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
             .setTitle("Finish Workout?")
             .setMessage("Save progress for ${dayWithEx.day.name}?")
             .setPositiveButton("Save") { _, _ ->
@@ -290,6 +291,7 @@ class WorkoutSessionFragment : Fragment() {
         val settings = viewModel.settings.value ?: com.skulpt.app.data.model.AppSettings()
         val dialog = WebViewSearchDialogFragment.newInstance(
             exercise.name,
+            settings.defaultImageQuery,
             settings.webViewHardwareAcceleration,
             settings.customUserAgent
         )

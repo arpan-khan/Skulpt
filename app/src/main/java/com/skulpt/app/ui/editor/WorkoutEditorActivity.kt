@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import android.view.ViewGroup
+import android.view.LayoutInflater
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -67,7 +69,7 @@ class WorkoutEditorActivity : AppCompatActivity() {
         adapter = EditorExerciseAdapter(
             onEditClick = { exercise -> showEditDialog(exercise) },
             onDeleteClick = { exercise ->
-                AlertDialog.Builder(this)
+                com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                     .setTitle("Delete Exercise")
                     .setMessage("Remove \"${exercise.name}\"?")
                     .setPositiveButton("Delete") { _, _ -> viewModel.deleteExercise(exercise) }
@@ -194,7 +196,7 @@ class WorkoutEditorActivity : AppCompatActivity() {
             options.add("Delete Custom Image")
         }
 
-        AlertDialog.Builder(this)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle(exercise.name)
             .setItems(options.toTypedArray()) { _, which ->
                 when (options[which]) {
@@ -229,6 +231,7 @@ class WorkoutEditorActivity : AppCompatActivity() {
     private fun showInternetSearchDialog(exercise: com.skulpt.app.data.model.Exercise) {
         val dialog = com.skulpt.app.ui.session.WebViewSearchDialogFragment.newInstance(
             exercise.name,
+            viewModel.defaultImageQuery.value,
             true, // acceleration
             ""   // user agent
         )
@@ -254,7 +257,7 @@ class WorkoutEditorActivity : AppCompatActivity() {
             "Tricep Dips", "Jumping Jacks", "Burpees", "Mountain Climbers",
             "Crunches", "Leg Raises", "Hip Thrusts", "Rows"
         )
-        AlertDialog.Builder(this)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle("Quick Add Exercise")
             .setItems(commonExercises) { _, which ->
                 viewModel.addExercise(commonExercises[which], 3, 10)
@@ -264,23 +267,73 @@ class WorkoutEditorActivity : AppCompatActivity() {
             .show()
     }
     private fun showDayColorPicker() {
-        val colors = arrayOf(
-            "#6750A4", // Default Purple
-            "#B00020", // Red
-            "#388E3C", // Green
-            "#1976D2", // Blue
-            "#FBC02D", // Yellow
-            "#E64A19", // Orange
-            "#7B1FA2", // Deep Purple
-            "#00796B"  // Teal
+        val colors = listOf(
+            "#6750A4", "#B00020", "#4CAF50", "#2196F3", "#FFEB3B", "#FF9800",
+            "#6200EE", "#03DAC5", "#E91E63", "#9C27B0", "#00BCD4", "#8BC34A",
+            "#CDDC39", "#FFC107", "#FF5722", "#795548", "#9E9E9E", "#607D8B"
         )
-        val colorNames = arrayOf("Default", "Red", "Green", "Blue", "Yellow", "Orange", "Deep Purple", "Teal")
+        val currentColor = viewModel.dayColor.value ?: "#6750A4"
 
-        AlertDialog.Builder(this)
+        val dialogBinding = com.skulpt.app.databinding.DialogColorPickerBinding.inflate(layoutInflater)
+        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle("Pick Session Color")
-            .setItems(colorNames) { _, which ->
-                viewModel.updateDayColor(colors[which])
+            .setView(dialogBinding.root)
+            .create()
+
+        class ColorViewHolder(val itemBinding: com.skulpt.app.databinding.ItemColorPickerBinding) : RecyclerView.ViewHolder(itemBinding.root)
+
+        dialogBinding.recyclerColors.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 4)
+        dialogBinding.recyclerColors.adapter = object : RecyclerView.Adapter<ColorViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
+                val itemBinding = com.skulpt.app.databinding.ItemColorPickerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                return ColorViewHolder(itemBinding)
             }
+            override fun onBindViewHolder(holder: ColorViewHolder, position: Int) {
+                val hex = colors[position]
+                holder.itemBinding.viewColor.setBackgroundColor(android.graphics.Color.parseColor(hex))
+                holder.itemBinding.cardColor.strokeColor = if (hex.equals(currentColor, true)) {
+                    com.google.android.material.color.MaterialColors.getColor(holder.itemBinding.root, com.google.android.material.R.attr.colorPrimary)
+                } else {
+                    android.graphics.Color.TRANSPARENT
+                }
+                holder.itemBinding.root.setOnClickListener {
+                    viewModel.updateDayColor(hex)
+                    dialog.dismiss()
+                }
+            }
+            override fun getItemCount() = colors.size
+        }
+
+        dialogBinding.btnCustomColor.setOnClickListener {
+            dialog.dismiss()
+            showCustomColorDialog()
+        }
+
+        dialog.show()
+    }
+
+    private fun showCustomColorDialog() {
+        val input = com.google.android.material.textfield.TextInputEditText(this).apply {
+            hint = "#RRGGBB"
+            setText(viewModel.dayColor.value)
+        }
+        val layout = com.google.android.material.textfield.TextInputLayout(this, null, com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox).apply {
+            setPadding(48, 24, 48, 24)
+            addView(input)
+        }
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle("Custom Hex Color")
+            .setView(layout)
+            .setPositiveButton("Apply") { _, _ ->
+                val hex = input.text.toString().trim()
+                if (hex.matches(Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))) {
+                    viewModel.updateDayColor(hex.uppercase())
+                } else {
+                    Toast.makeText(this, "Invalid hex code", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 }

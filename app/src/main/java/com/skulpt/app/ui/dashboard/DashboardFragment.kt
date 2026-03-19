@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.skulpt.app.R
 import com.skulpt.app.databinding.FragmentDashboardBinding
 import com.skulpt.app.ui.editor.WorkoutEditorActivity
@@ -101,6 +102,17 @@ class DashboardFragment : Fragment() {
 
         binding.fabAddDay.setOnClickListener {
             showAddDayDialog()
+        }
+
+        binding.fabResetProgressDashboard.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Reset Daily Progress?")
+                .setMessage("This will set all workouts to 0 completion for today. Your exercise data and stats remain safe. Proceed?")
+                .setPositiveButton("Reset") { _, _ ->
+                    viewModel.resetAllWorkoutProgress()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 

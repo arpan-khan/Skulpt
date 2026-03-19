@@ -90,18 +90,19 @@ object PlaceholderUtil {
      * Returns a dynamic image URL for the exercise using Bing Thumbnail API.
      * This provides real search engine results as requested by the user.
      */
-    fun getDynamicImageUrl(exerciseName: String, baseQuery: String = "gym,exercise"): String {
+    fun getDynamicImageUrl(exerciseName: String, baseQuery: String? = null): String {
         val query = exerciseName.trim().replace(" ", "+")
+        val suffix = if (baseQuery.isNullOrBlank()) "workout+gym" else baseQuery.trim().replace(" ", "+")
         // Using Bing's thumbnail API for fast, relevant image preview
-        return "https://tse1.mm.bing.net/th?q=$query+workout+gym&pid=Api"
+        return "https://tse1.mm.bing.net/th?q=$query+$suffix&pid=Api"
     }
 
     /**
      * Returns a specific dynamic image URL with a signature or variant.
      */
-    fun getSearchImageUrl(query: String, seed: Int): String {
-        // We can vary the query slightly for different results if needed
+    fun getSearchImageUrl(query: String, seed: Int, baseQuery: String? = null): String {
         val encodedQuery = query.trim().replace(" ", "+")
-        return "https://tse1.mm.bing.net/th?q=$encodedQuery+workout&pid=Api"
+        val suffix = if (baseQuery.isNullOrBlank()) "workout" else baseQuery.trim().replace(" ", "+")
+        return "https://tse1.mm.bing.net/th?q=$encodedQuery+$suffix&pid=Api"
     }
 }

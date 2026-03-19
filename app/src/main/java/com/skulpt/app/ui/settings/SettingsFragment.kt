@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import android.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
@@ -12,6 +12,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
@@ -112,6 +115,16 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Robust fix for status bar padding + keyboard compatibility
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            // paddingHorizontal (24dp) and paddingBottom (48dp) are already in XML
+            // We only adjust the top padding to be (statusBar + 24dp)
+            val basePaddingTop = (24 * resources.displayMetrics.density).toInt()
+            v.updatePadding(top = statusBarHeight + basePaddingTop)
+            insets
+        }
 
         viewModel.settings.observe(viewLifecycleOwner) { settings ->
             if (settings != null) {
@@ -278,7 +291,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btnImportBackup.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Restore Backup")
                 .setMessage("Warning: This will overwrite ALL current workouts, stats, and settings. The app will restart. Proceed?")
                 .setPositiveButton("Restore") { _, _ ->
@@ -319,7 +332,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btnResetData.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Reset All Data")
                 .setMessage("This will delete all workout sessions and cannot be undone. Your schedule will remain.")
                 .setPositiveButton("Reset Sessions") { _, _ ->
@@ -335,7 +348,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btnResetWebview.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Reset WebView Cache")
                 .setMessage("This will clear all Cookies, Cache, and Browser data. This often fixes the 'blank screen' issue.")
                 .setPositiveButton("Reset") { _, _ ->
@@ -345,8 +358,19 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
+        binding.btnClearImageCache.setOnClickListener {
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Clear Image Cache")
+                .setMessage("This will delete all cached exercise images. They will be re-downloaded when needed. Proceed?")
+                .setPositiveButton("Clear") { _, _ ->
+                    clearImageCache()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+
         binding.tvAboutApp.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("About Skulpt")
                 .setMessage("Skulpt is an offline-first fitness tracking application.\n\nDeveloped by Arpan.\n\nBuilt natively using Kotlin and Material 3 design and with the help of AI.")
                 .setPositiveButton("GitHub") { _, _ ->
@@ -370,6 +394,17 @@ class SettingsFragment : Fragment() {
         webView.clearSslPreferences()
         
         Toast.makeText(requireContext(), "WebView cleared! Re-try the search now.", Toast.LENGTH_LONG).show()
+    }
+
+    private fun clearImageCache() {
+        val glide = com.bumptech.glide.Glide.get(requireContext())
+        glide.clearMemory()
+        CoroutineScope(Dispatchers.IO).launch {
+            glide.clearDiskCache()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Image cache cleared! 🧹", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateReminderTimeUI(hour: Int, minute: Int) {
