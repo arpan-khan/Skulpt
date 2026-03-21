@@ -42,10 +42,6 @@ object PlaceholderUtil {
         return Color.parseColor(hex)
     }
 
-    /**
-     * Returns a drawable placeholder based on the exercise name.
-     * Generates a colored circle with the first letter of the exercise.
-     */
     fun getPlaceholderDrawable(context: Context, exerciseName: String): Drawable {
         val color = getColorForExercise(exerciseName)
         val letter = exerciseName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
@@ -86,20 +82,13 @@ object PlaceholderUtil {
         override fun getOpacity() = android.graphics.PixelFormat.TRANSLUCENT
     }
 
-    /**
-     * Returns a dynamic image URL for the exercise using Bing Thumbnail API.
-     * This provides real search engine results as requested by the user.
-     */
     fun getDynamicImageUrl(exerciseName: String, baseQuery: String? = null): String {
         val query = exerciseName.trim().replace(" ", "+")
         val suffix = if (baseQuery.isNullOrBlank()) "workout+gym" else baseQuery.trim().replace(" ", "+")
-        // Using Bing's thumbnail API for fast, relevant image preview
+
         return "https://tse1.mm.bing.net/th?q=$query+$suffix&pid=Api"
     }
 
-    /**
-     * Returns a specific dynamic image URL with a signature or variant.
-     */
     fun getSearchImageUrl(query: String, seed: Int, baseQuery: String? = null): String {
         val encodedQuery = query.trim().replace(" ", "+")
         val suffix = if (baseQuery.isNullOrBlank()) "workout" else baseQuery.trim().replace(" ", "+")

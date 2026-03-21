@@ -47,8 +47,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         val current = allDaysWithExercises.value?.toMutableList() ?: return
         val item = current.removeAt(fromIndex)
         current.add(toIndex, item)
-        // Note: LiveData is backed by Room, so it will refresh when we save to DB.
-        // For smoother UI we rely on the Activity skipping submitList during drag.
+
     }
 
     fun saveDayOrder(newList: List<DayWithExercises>) {

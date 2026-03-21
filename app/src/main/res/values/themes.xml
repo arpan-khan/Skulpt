@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
+
     <style name="Theme.Skulpt" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
@@ -17,11 +17,10 @@
         <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
         <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
         <item name="colorOutline">@color/md_theme_outline</item>
-        
-        <!-- Shape Appearance -->
+
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Skulpt.Large</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Skulpt.Medium</item>
-        
+
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowLightStatusBar">true</item>
 

@@ -42,13 +42,13 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         var totalSetsCompleted = 0
         var totalRepsCompleted = 0
         var totalTimeSeconds = 0L
-        
+
         val activeDaysMap = mutableMapOf<Long, Int>()
         val cal = Calendar.getInstance()
         val now = Calendar.getInstance()
         val nowMillis = now.timeInMillis
         val todayStart = normalizeToDay(nowMillis)
-        
+
         val currentYear = now.get(Calendar.YEAR)
         val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
         val currentMonth = now.get(Calendar.MONTH)
@@ -67,16 +67,16 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
             totalSetsCompleted += it.completedSets
             totalRepsCompleted += it.completedReps
             totalTimeSeconds += it.durationSeconds
-            
+
             val dayStart = normalizeToDay(it.dateMillis)
             activeDaysMap[dayStart] = (activeDaysMap[dayStart] ?: 0) + 1
-            
+
             cal.timeInMillis = it.dateMillis
             val dur = it.durationSeconds
             if (dur > longestSessionTimeSeconds) longestSessionTimeSeconds = dur
-            
+
             if (dayStart == todayStart) timeTodaySeconds += dur
-            
+
             if (cal.get(Calendar.YEAR) == currentYear) {
                 if (cal.get(Calendar.WEEK_OF_YEAR) == currentWeek) {
                     workoutsThisWeek++
@@ -87,7 +87,7 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
                     timeThisMonthSeconds += dur
                 }
             }
-            
+
             if (it.completedExercises > 0) {
                 distribution[it.dayName] = (distribution[it.dayName] ?: 0) + it.completedExercises
             }
@@ -134,7 +134,7 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
             }
             val dayStart = normalizeToDay(cal.timeInMillis)
             val dayEnd = dayStart + TimeUnit.DAYS.toMillis(1)
-            
+
             val count = sessions.filter { it.dateMillis in dayStart until dayEnd }.sumOf { it.completedSets }
             val label = dayLabels[cal.get(Calendar.DAY_OF_WEEK) - 1]
             activity.add(ActivityPoint(label, count))
@@ -147,7 +147,7 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
 
         val cal = Calendar.getInstance()
         val workoutDays = sessions
-            .map { 
+            .map {
                 cal.timeInMillis = it.dateMillis
                 normalizeToDay(cal.timeInMillis)
             }
@@ -158,17 +158,16 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         val yesterday = today - TimeUnit.DAYS.toMillis(1)
 
         var currentStreak = 0
-        if (workoutDays.isNotEmpty() && (workoutDays[0] == today || workoutDays[1] == yesterday)) { // corrected index check
-            // Actually simpler to just check if first day is today or yesterday
-            val startDay = if (workoutDays[0] == today || workoutDays[0] == yesterday) workoutDays[0] else -1L
-            if (startDay != -1L) {
-                currentStreak = 1
-                var lastDay = startDay
-                for (i in 1 until workoutDays.size) {
-                    if (workoutDays[i] == lastDay - TimeUnit.DAYS.toMillis(1)) {
-                        currentStreak++
-                        lastDay = workoutDays[i]
-                    } else break
+        val firstDay = workoutDays.getOrNull(0)
+        if (firstDay != null && (firstDay == today || firstDay == yesterday)) {
+            currentStreak = 1
+            var lastDay: Long = firstDay
+            for (i in 1 until workoutDays.size) {
+                if (workoutDays[i] == lastDay - TimeUnit.DAYS.toMillis(1)) {
+                    currentStreak++
+                    lastDay = workoutDays[i]
+                } else {
+                    break
                 }
             }
         }
@@ -189,27 +188,21 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         return currentStreak to longestStreak
     }
 
-    // Removed calculateHeatmap since UI renders it from raw mapped data.
-
     private suspend fun calculateConsistency(sessions: List<WorkoutSession>): Int {
         val totalScheduledDays = workoutRepository.getDayCount()
         if (totalScheduledDays == 0) return 0
-        
-        // Active days in the list of sessions (unique days)
+
         val activeDaysSet = sessions.map { normalizeToDay(it.dateMillis) }.toSet()
-        
-        // For simplicity, consistency is (%) = (Sessions in last 30 days) / (Scheduled Days * 4.3) 
-        // Or better: (Days worked out in last 30 days) / (Total Scheduled Days in 30 days)
-        // Let's assume the user has N scheduled days per week.
+
         val daysIn30Days = 30
-        val scheduledDaysPerMonth = totalScheduledDays * 4 // approx
-        
+        val scheduledDaysPerMonth = totalScheduledDays * 4
+
         val now = System.currentTimeMillis()
         val thirtyDaysAgo = now - TimeUnit.DAYS.toMillis(30)
-        
+
         val sessionsInLast30 = activeDaysSet.count { it >= thirtyDaysAgo }
-        
-        return if (scheduledDaysPerMonth == 0) 0 
+
+        return if (scheduledDaysPerMonth == 0) 0
                else (sessionsInLast30 * 100 / scheduledDaysPerMonth).coerceIn(0, 100)
     }
 

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class WorkoutDay(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val dayIndex: Int,       // 0=Monday…6=Sunday, 7=Custom
+    val dayIndex: Int,
     val name: String,
-    val colorHex: String = "#6750A4" // default accent
+    val colorHex: String = "#6750A4"
 )

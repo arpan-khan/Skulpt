@@ -49,14 +49,9 @@ class AllActivityFragment : Fragment() {
 
         viewModel.statsData.observe(viewLifecycleOwner) { data ->
             data ?: return@observe
-            // For now we use the same repo that gets all sessions but computeStats only takes 10.
-            // We need a way to get all sessions in the ViewModel.
-            // But actually, computeStats returns StatsData which has recentSessions.
-            // I should either update StatsData to have allSessions or call another method.
+
         }
-        
-        // Let's observe the repository's allSessions directly if possible, or update ViewModel.
-        // Actually, we'll update the ViewModel to expose allSessions.
+
         viewModel.allSessions.observe(viewLifecycleOwner) { sessions: List<WorkoutSession>? ->
             adapter.submitList(sessions)
         }
@@ -93,7 +88,7 @@ class AllActivityFragment : Fragment() {
                 val sets = dialogBinding.etSets.text.toString().toIntOrNull() ?: session.completedSets
                 val exercises = dialogBinding.etExercises.text.toString().toIntOrNull() ?: session.completedExercises
                 val duration = (dialogBinding.etDuration.text.toString().toLongOrNull() ?: (session.durationSeconds / 60)) * 60L
-                
+
                 val updated = session.copy(
                     dayName = name,
                     completedSets = sets,
@@ -107,7 +102,7 @@ class AllActivityFragment : Fragment() {
     }
 
     private fun showAddDialog() {
-        // Simple add dialog for now
+
         val dialogBinding = DialogEditSessionBinding.inflate(layoutInflater)
         dialogBinding.etName.setText("Manual Entry")
         dialogBinding.tilSets.hint = "Sets completed"
@@ -122,9 +117,9 @@ class AllActivityFragment : Fragment() {
                 val sets = dialogBinding.etSets.text.toString().toIntOrNull() ?: 0
                 val exercises = dialogBinding.etExercises.text.toString().toIntOrNull() ?: 0
                 val duration = (dialogBinding.etDuration.text.toString().toLongOrNull() ?: 0L) * 60L
-                
+
                 val session = WorkoutSession(
-                    dayId = -1L, // Manual entry
+                    dayId = -1L,
                     dayName = name,
                     totalExercises = exercises,
                     completedExercises = exercises,

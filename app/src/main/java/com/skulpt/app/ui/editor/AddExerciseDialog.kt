@@ -23,7 +23,7 @@ class AddExerciseDialog(
             binding.etReps.setText(ex.reps.toString())
             binding.etNotes.setText(ex.notes)
             binding.etTimer.setText(ex.timerSeconds.toString())
-            
+
         }
 
         val title = if (existingExercise != null) "Edit Exercise" else "Add Exercise"
@@ -31,7 +31,7 @@ class AddExerciseDialog(
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setView(binding.root)
-            .setPositiveButton("Save", null) // set in onStart to access button
+            .setPositiveButton("Save", null)
             .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
             .create()
 

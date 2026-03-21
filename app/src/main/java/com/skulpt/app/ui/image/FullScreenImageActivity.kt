@@ -26,7 +26,6 @@ class FullScreenImageActivity : AppCompatActivity() {
 
         binding.btnClose.setOnClickListener { finish() }
 
-        // Full screen immersive
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or

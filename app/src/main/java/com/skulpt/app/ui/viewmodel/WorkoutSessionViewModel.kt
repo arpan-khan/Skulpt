@@ -46,7 +46,7 @@ class WorkoutSessionViewModel(application: Application) : AndroidViewModel(appli
 
     fun startSession(shouldReset: Boolean) {
         if (_isSessionActive.value == true) return
-        
+
         if (shouldReset) {
             _elapsedTimeSeconds.value = 0L
             resetSession()
@@ -54,7 +54,7 @@ class WorkoutSessionViewModel(application: Application) : AndroidViewModel(appli
 
         _isSessionActive.value = true
         sessionStartMillis = System.currentTimeMillis() - (_elapsedTimeSeconds.value ?: 0L) * 1000L
-        
+
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (true) {
@@ -91,20 +91,20 @@ class WorkoutSessionViewModel(application: Application) : AndroidViewModel(appli
     fun saveSession(day: DayWithExercises) {
         viewModelScope.launch {
             val durationSeconds = _elapsedTimeSeconds.value ?: 0L
-            
+
             val totalSets = day.exercises.sumOf { it.sets }
-            // Calculate NEWLY completed sets since last track
+
             val newCompletedSets = day.exercises.sumOf { (it.completedSets - it.lastTrackedSets).coerceAtLeast(0) }
-            
+
             val totalReps = day.exercises.sumOf { it.sets * it.reps }
-            val newCompletedReps = day.exercises.sumOf { 
+            val newCompletedReps = day.exercises.sumOf {
                 val newSets = (it.completedSets - it.lastTrackedSets).coerceAtLeast(0)
                 newSets * it.reps
             }
             val newCompletedExercises = day.exercises.count { it.completedSets > it.lastTrackedSets }
 
             if (newCompletedSets <= 0 && day.completedCount <= 0) {
-                // Nothing new to track, just return or handle as needed
+
             }
 
             val session = WorkoutSession(
@@ -120,7 +120,6 @@ class WorkoutSessionViewModel(application: Application) : AndroidViewModel(appli
             )
             repository.insertSession(session)
 
-            // Update lastTrackedSets for all exercises
             day.exercises.forEach {
                 repository.updateExerciseLastTrackedSets(it.id, it.completedSets)
             }

@@ -57,26 +57,24 @@ abstract class SkulptDatabase : RoomDatabase() {
 
         val MIGRATION_5_6 = object : androidx.room.migration.Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Add new columns to 'exercises' if they are missing
-                // Note: Room is strict, but ALTER TABLE is usually safe
+
                 try { db.execSQL("ALTER TABLE exercises ADD COLUMN completedSets INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
                 try { db.execSQL("ALTER TABLE exercises ADD COLUMN lastTrackedSets INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
                 try { db.execSQL("ALTER TABLE exercises ADD COLUMN timerSeconds INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
                 try { db.execSQL("ALTER TABLE exercises ADD COLUMN notes TEXT NOT NULL DEFAULT ''") } catch(e: Exception){}
 
-                // Create 'workout_sessions' table with correct SQLite syntax
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS `workout_sessions` (
-                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                        `dayId` INTEGER NOT NULL, 
-                        `dayName` TEXT NOT NULL, 
-                        `dateMillis` INTEGER NOT NULL, 
-                        `totalExercises` INTEGER NOT NULL, 
-                        `completedExercises` INTEGER NOT NULL, 
-                        `totalSets` INTEGER NOT NULL DEFAULT 0, 
-                        `completedSets` INTEGER NOT NULL DEFAULT 0, 
-                        `totalReps` INTEGER NOT NULL DEFAULT 0, 
-                        `completedReps` INTEGER NOT NULL DEFAULT 0, 
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `dayId` INTEGER NOT NULL,
+                        `dayName` TEXT NOT NULL,
+                        `dateMillis` INTEGER NOT NULL,
+                        `totalExercises` INTEGER NOT NULL,
+                        `completedExercises` INTEGER NOT NULL,
+                        `totalSets` INTEGER NOT NULL DEFAULT 0,
+                        `completedSets` INTEGER NOT NULL DEFAULT 0,
+                        `totalReps` INTEGER NOT NULL DEFAULT 0,
+                        `completedReps` INTEGER NOT NULL DEFAULT 0,
                         `durationSeconds` INTEGER NOT NULL DEFAULT 0
                     )
                 """.trimIndent())
@@ -99,15 +97,12 @@ abstract class SkulptDatabase : RoomDatabase() {
             val exerciseDao = database.exerciseDao()
             val settingsDao = database.appSettingsDao()
 
-            // Insert default settings
             settingsDao.upsertSettings(AppSettings())
 
-            // Insert one default workout day
             val dayId = dayDao.insertDay(
                 WorkoutDay(dayIndex = 0, name = "My Workout", colorHex = "#6750A4")
             )
 
-            // Seed it with sample exercises
             val sampleExercises = listOf(
                 Exercise(dayId = dayId, name = "Pushups", sets = 3, reps = 15, orderIndex = 0),
                 Exercise(dayId = dayId, name = "Pullups", sets = 3, reps = 8, orderIndex = 1),

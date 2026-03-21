@@ -37,7 +37,7 @@ class ExerciseCardAdapter(
     fun setBaseQuery(query: String) {
         if (baseQuery != query) {
             baseQuery = query
-            notifyDataSetChanged() // Re-bind images with new query
+            notifyDataSetChanged()
         }
     }
 
@@ -68,7 +68,6 @@ class ExerciseCardAdapter(
             binding.tvNotes.text = exercise.notes
             binding.tvNotes.visibility = if (exercise.notes.isNotEmpty()) View.VISIBLE else View.GONE
 
-            // Completion state
             if (exercise.isCompleted) {
                 binding.tvExerciseName.paintFlags =
                     binding.tvExerciseName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -81,27 +80,24 @@ class ExerciseCardAdapter(
                 binding.checkBox.isChecked = false
             }
 
-            // Set Progress
             binding.setProgressBar.max = exercise.sets
             binding.setProgressBar.progress = exercise.completedSets
             binding.tvSetsReps.text = "${exercise.completedSets}/${exercise.sets} sets × ${exercise.reps} reps"
-            
+
             binding.btnIncrementSet.setOnClickListener {
                 onIncrementToggle(exercise)
             }
 
-            // Accent Color (Text)
             try {
                 val colorInt = android.graphics.Color.parseColor(exercise.hexcolor)
                 binding.tvExerciseName.setTextColor(colorInt)
             } catch (e: Exception) {
-                // Default color if parsing fails
+
                 binding.tvExerciseName.setTextColor(
                     com.google.android.material.color.MaterialColors.getColor(binding.tvExerciseName, com.google.android.material.R.attr.colorOnSurface)
                 )
             }
 
-            // Image
             val imageUri = exercise.imageUri
             val displayImage = if (!imageUri.isNullOrEmpty()) imageUri else PlaceholderUtil.getDynamicImageUrl(exercise.name, baseQuery)
 
@@ -119,7 +115,6 @@ class ExerciseCardAdapter(
 
             binding.ivExercise.setOnClickListener { onImageClick(exercise) }
 
-            // Timer indicator
             binding.tvTimer.visibility =
                 if (exercise.timerSeconds > 0) View.VISIBLE else View.GONE
             if (exercise.timerSeconds > 0) {
@@ -131,7 +126,6 @@ class ExerciseCardAdapter(
                 }
             }
 
-            // Staggered entrance animation (only once)
             if (binding.root.alpha == 0f || binding.root.translationY != 0f) {
                 binding.root.translationY = 40f
                 binding.root.alpha = 0f
@@ -149,7 +143,7 @@ class ExerciseCardAdapter(
             binding.checkBox.setOnClickListener {
                 onCheckToggle(exercise)
                 if (!exercise.isCompleted) {
-                    // Check animation
+
                     val scaleX = ObjectAnimator.ofFloat(binding.root, "scaleX", 1f, 1.03f, 1f)
                     val scaleY = ObjectAnimator.ofFloat(binding.root, "scaleY", 1f, 1.03f, 1f)
                     AnimatorSet().apply {

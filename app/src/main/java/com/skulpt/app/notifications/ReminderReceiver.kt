@@ -13,7 +13,7 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
-                // Re-schedule alarm after boot
+
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val db = SkulptApplication.instance.database
@@ -27,9 +27,9 @@ class ReminderReceiver : BroadcastReceiver() {
                 }
             }
             else -> {
-                // Alarm fired - show notification
+
                 NotificationHelper.showReminder(context)
-                // Re-schedule for next day
+
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val db = SkulptApplication.instance.database

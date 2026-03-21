@@ -45,11 +45,11 @@ class StatsFragment : Fragment() {
             binding.tvTotalExercises.text = data.totalExCompleted.toString()
             binding.tvTotalSets.text = data.totalSetsCompleted.toString()
             binding.tvTotalReps.text = data.totalRepsCompleted.toString()
-            
+
             val hours = data.totalTimeSeconds / 3600
             val mins = (data.totalTimeSeconds % 3600) / 60
             binding.tvTotalTime.text = "${hours}h ${mins}m"
-            
+
             binding.tvConsistency.text = "${data.consistencyPercent}%"
             binding.tvCurrentStreak.text = data.currentStreak.toString()
             binding.tvLongestStreak.text = data.longestStreak.toString()
@@ -64,18 +64,18 @@ class StatsFragment : Fragment() {
                 "$dateStr — ${session.dayName} (${session.completedExercises}/${session.totalExercises})"
             }
             binding.tvRecentSessions.text = sessionLines.ifEmpty { "No sessions yet.\nStart your first workout!" }
-            
+
             fun formatTime(seconds: Long): String {
                 val h = seconds / 3600
                 val m = (seconds % 3600) / 60
                 return if (h > 0) "${h}h ${m}m" else "${m}m"
             }
-            
+
             binding.tvTimeToday.text = formatTime(data.timeTodaySeconds)
             binding.tvLongestSession.text = formatTime(data.longestSessionTimeSeconds)
             binding.tvTimeThisWeek.text = formatTime(data.timeThisWeekSeconds)
             binding.tvTimeThisMonth.text = formatTime(data.timeThisMonthSeconds)
-            
+
             updateCharts(data)
         }
 
@@ -128,7 +128,6 @@ class StatsFragment : Fragment() {
             val width = scrollView.width
             if (width == 0) return@post
 
-            // Clear and rebuild only when dimensions are known and we're ready to fill
             binding.gridHeatmap.removeAllViews()
 
             val context = requireContext()
@@ -149,29 +148,29 @@ class StatsFragment : Fragment() {
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            
+
             val todayIndex = todayCal.get(Calendar.DAY_OF_WEEK) - 1
             val daysToOffset = 6 - todayIndex
             val totalCells = columns * 7
-            
+
             val startCal = todayCal.clone() as Calendar
             startCal.add(Calendar.DAY_OF_YEAR, -(totalCells - 1 - daysToOffset))
-            
+
             for (i in 0 until totalCells) {
                 val currentCal = startCal.clone() as Calendar
                 currentCal.add(Calendar.DAY_OF_YEAR, i)
                 val currentMillis = currentCal.timeInMillis
-                
+
                 val count = activeMap[currentMillis] ?: 0
                 val isFuture = currentMillis > todayCal.timeInMillis
-                
+
                 val view = View(context).apply {
                     val baseParams = android.view.ViewGroup.LayoutParams(cellSize, cellSize)
                     val params = GridLayout.LayoutParams(baseParams).apply {
                         setMargins(margin, margin, margin, margin)
                     }
                     layoutParams = params
-                    
+
                     val color = when {
                         isFuture -> Color.TRANSPARENT
                         count == 0 -> if (isDarkMode()) Color.parseColor("#2D2D2D") else Color.parseColor("#EBEDF0")
@@ -188,17 +187,17 @@ class StatsFragment : Fragment() {
     }
 
     private fun updateCharts(data: StatsRepository.StatsData) {
-        // Pie Chart - Exercise Distribution by Day
+
         val entries = data.exerciseDistribution.map { (name, count) ->
             PieEntry(count.toFloat(), name)
         }
         val colors = listOf(
-            Color.parseColor("#9279D1"), // Lavender
-            Color.parseColor("#4CAF50"), // Green
-            Color.parseColor("#FF9800"), // Orange
-            Color.parseColor("#2196F3"), // Blue
-            Color.parseColor("#E91E63"), // Pink
-            Color.parseColor("#FFC107")  // Amber
+            Color.parseColor("#9279D1"),
+            Color.parseColor("#4CAF50"),
+            Color.parseColor("#FF9800"),
+            Color.parseColor("#2196F3"),
+            Color.parseColor("#E91E63"),
+            Color.parseColor("#FFC107")
         )
         val pieDataSet = PieDataSet(entries, "").apply {
             this.colors = colors
@@ -213,7 +212,6 @@ class StatsFragment : Fragment() {
             invalidate()
         }
 
-        // Bar Chart
         val barEntries = data.weeklyActivity.mapIndexed { index, point ->
             BarEntry(index.toFloat(), point.count.toFloat())
         }

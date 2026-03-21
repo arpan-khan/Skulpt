@@ -29,7 +29,7 @@ data class Exercise(
     val isCompleted: Boolean = false,
     val completedSets: Int = 0,
     val lastTrackedSets: Int = 0,
-    val timerSeconds: Int = 0,    // 0 = no timer
+    val timerSeconds: Int = 0,
     val hexcolor: String = "#6750A4",
     val notes: String = ""
 )

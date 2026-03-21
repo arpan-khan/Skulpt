@@ -66,7 +66,7 @@ object NotificationHelper {
             set(Calendar.MINUTE, settings.reminderMinute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            // If time has passed today, schedule for tomorrow
+
             if (before(Calendar.getInstance())) {
                 add(Calendar.DAY_OF_MONTH, 1)
             }
@@ -90,7 +90,7 @@ object NotificationHelper {
                 )
             }
         } catch (e: SecurityException) {
-            // Exact alarm not permitted on some devices - fall back to inexact
+
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, intent)
         }
     }

@@ -18,14 +18,13 @@ class CustomDayViewModel(application: Application) : AndroidViewModel(applicatio
         db.workoutDayDao(), db.exerciseDao(), db.workoutSessionDao()
     )
 
-    // In-memory only — not stored in DB
     private val _exercises = MutableLiveData<List<Exercise>>(emptyList())
     val exercises: LiveData<List<Exercise>> = _exercises
 
     private val _sessionSaved = MutableLiveData(false)
     val sessionSaved: LiveData<Boolean> = _sessionSaved
 
-    private var idCounter = -1L  // negative IDs = in-memory only
+    private var idCounter = -1L
 
     fun addExercise(name: String, sets: Int, reps: Int, notes: String = "", timerSeconds: Int = 0) {
         val current = _exercises.value?.toMutableList() ?: mutableListOf()

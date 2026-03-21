@@ -70,8 +70,7 @@ class DashboardFragment : Fragment() {
             ): Boolean {
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
-                
-                // Update the adapter's internal list and notify movement
+
                 adapter.moveItem(from, to)
                 return true
             }
@@ -81,7 +80,7 @@ class DashboardFragment : Fragment() {
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                 super.clearView(recyclerView, viewHolder)
                 isDragging = false
-                // Save final order to database
+
                 val currentDays = (binding.recyclerDays.adapter as? DayCardAdapter)?.getDays() ?: return
                 viewModel.saveDayOrder(currentDays)
             }

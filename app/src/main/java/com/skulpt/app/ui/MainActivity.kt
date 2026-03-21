@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         val bottomNav: BottomNavigationView = binding.bottomNavigation
         bottomNav.setupWithNavController(navController)
 
-        // Ensure Dashboard tab stays highlighted for workout session & custom day
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.workoutSessionFragment || destination.id == R.id.customDayFragment) {
                 bottomNav.menu.findItem(R.id.dashboardFragment).isChecked = true
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             if (item.itemId == R.id.dashboardFragment) {
                 val currentDestination = navController.currentDestination?.id
                 if (currentDestination == R.id.workoutSessionFragment || currentDestination == R.id.customDayFragment) {
-                    // Navigate back to the main dashboard
+
                     navController.popBackStack(R.id.dashboardFragment, false)
                 }
             }

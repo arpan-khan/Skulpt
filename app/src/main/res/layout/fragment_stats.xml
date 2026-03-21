@@ -30,7 +30,6 @@
                 android:layout_marginBottom="24dp"
                 android:alpha="0.8" />
 
-        <!-- Heatmap Section -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,7 +53,7 @@
                     android:textColor="?attr/colorPrimary"
                     android:alpha="0.7"
                     android:layout_marginBottom="12dp" />
-                
+
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,7 +70,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Stats Grid (2x3) -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +78,6 @@
             android:columnOrderPreserved="false"
             android:useDefaultMargins="true">
 
-            <!-- Total Workouts -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -101,7 +98,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Total Exercises -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -122,7 +118,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Total Sets -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -143,7 +138,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Total Reps -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -164,7 +158,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Total Time -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -185,7 +178,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Consistency -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_columnWeight="1"
@@ -207,7 +199,6 @@
             </com.google.android.material.card.MaterialCardView>
         </GridLayout>
 
-        <!-- Streaks & Goals -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -222,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp">
-                
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -263,7 +254,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Time Spent Tracking -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -278,7 +268,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp">
-                
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -329,7 +319,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Charts Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

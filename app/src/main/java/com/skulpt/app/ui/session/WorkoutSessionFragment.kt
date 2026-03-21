@@ -42,12 +42,12 @@ class WorkoutSessionFragment : Fragment() {
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             val id = pendingExerciseId ?: return@registerForActivityResult
-            // Save a local copy to internal storage for permanent access
+
             val localPath = com.skulpt.app.util.FileUtil.saveUriToInternalStorage(requireContext(), uri)
             if (localPath != null) {
                 viewModel.updateExerciseImage(id, localPath)
             } else {
-                // Fallback to direct URI if copying fails (try-catch within saveUri handles most errors)
+
                 viewModel.updateExerciseImage(id, uri.toString())
             }
         }
@@ -74,7 +74,7 @@ class WorkoutSessionFragment : Fragment() {
         adapter = ExerciseCardAdapter(
             onCheckToggle = { exercise ->
                 viewModel.toggleExercise(exercise)
-                // Auto scroll logic
+
                 if (autoScrollEnabled && !exercise.isCompleted) {
                     val currentList = viewModel.dayWithExercises.value?.exercises?.sortedBy { it.orderIndex }
                     if (currentList != null) {
@@ -110,7 +110,7 @@ class WorkoutSessionFragment : Fragment() {
         viewModel.dayWithExercises.observe(viewLifecycleOwner) { dayWithEx ->
             dayWithEx ?: return@observe
             binding.tvDayTitle.text = dayWithEx.day.name
-            binding.toolbar.title = "" // Day name is now in tvDayTitle
+            binding.toolbar.title = ""
 
             val total = dayWithEx.totalCount
             val completed = dayWithEx.completedCount
@@ -119,12 +119,11 @@ class WorkoutSessionFragment : Fragment() {
             binding.progressBar.progress = percent
             binding.tvProgress.text = "$completed / $total exercises completed"
 
-            // Bind hero image only if search query changed
             val firstExercise = dayWithEx.exercises.sortedBy { it.orderIndex }.firstOrNull()
             val heroQuery = firstExercise?.name ?: dayWithEx.day.name
             val baseQuery = viewModel.settings.value?.defaultImageQuery
             val heroUrl = com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(heroQuery, baseQuery)
-            
+
             if (binding.ivHero.tag != heroUrl) {
                 binding.ivHero.tag = heroUrl
                 com.bumptech.glide.Glide.with(this)
@@ -142,7 +141,6 @@ class WorkoutSessionFragment : Fragment() {
                 binding.cardAllDone.visibility = View.GONE
             }
 
-            // Only start rotation if not already running for this set of images
             startHeroRotation(dayWithEx.exercises)
         }
 
@@ -181,7 +179,7 @@ class WorkoutSessionFragment : Fragment() {
 
         binding.btnStartStopWorkout.setOnClickListener {
             if (viewModel.isSessionActive.value == true) {
-                // Just stop the timer, don't finish
+
                 viewModel.stopSession()
             } else {
                 showStartOptions()
@@ -201,7 +199,7 @@ class WorkoutSessionFragment : Fragment() {
                 binding.btnStartStopWorkout.text = "Start"
                 binding.btnStartStopWorkout.setIconResource(com.skulpt.app.R.drawable.ic_play)
             }
-            // Keep Track button visible if we have any progress or a session is active
+
             binding.btnFinishWorkout.visibility = View.VISIBLE
         }
 
@@ -249,7 +247,7 @@ class WorkoutSessionFragment : Fragment() {
                             exercise.imageUri
                         } else {
                             com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(
-                                exercise.name, 
+                                exercise.name,
                                 viewModel.settings.value?.defaultImageQuery ?: ""
                             )
                         }
@@ -272,7 +270,6 @@ class WorkoutSessionFragment : Fragment() {
             .show()
     }
 
-
     private fun showInternetSearchDialog(exercise: Exercise) {
         val settings = viewModel.settings.value ?: com.skulpt.app.data.model.AppSettings()
         val dialog = WebViewSearchDialogFragment.newInstance(
@@ -281,7 +278,7 @@ class WorkoutSessionFragment : Fragment() {
             settings.webViewHardwareAcceleration,
             settings.customUserAgent
         )
-        
+
         childFragmentManager.setFragmentResultListener(
             WebViewSearchDialogFragment.REQUEST_KEY,
             viewLifecycleOwner
@@ -292,11 +289,9 @@ class WorkoutSessionFragment : Fragment() {
                 Toast.makeText(requireContext(), "Image selected!", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         dialog.show(childFragmentManager, WebViewSearchDialogFragment.TAG)
     }
-
-    // Removed showSearchResultsDialog as it's merged into showInternetSearchDialog
 
     private fun startHeroRotation(exercises: List<Exercise>) {
         val imageUrls = exercises.map { ex ->
@@ -308,19 +303,18 @@ class WorkoutSessionFragment : Fragment() {
             heroRotationJob?.cancel()
             return
         }
-        
-        // Don't restart if already rotating same images
+
         if (heroRotationJob?.isActive == true && binding.ivHero.tag == "ROTATING_${imageUrls.hashCode()}") return
-        
+
         heroRotationJob?.cancel()
         binding.ivHero.tag = "ROTATING_${imageUrls.hashCode()}"
 
         heroRotationJob = viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
-                delay(4000) // Rotate every 4 seconds
+                delay(4000)
                 currentHeroIndex = (currentHeroIndex + 1) % imageUrls.size
                 val nextUrl = imageUrls[currentHeroIndex]
-                
+
                 if (_binding != null) {
                     com.bumptech.glide.Glide.with(this@WorkoutSessionFragment)
                         .load(nextUrl)

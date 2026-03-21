@@ -20,7 +20,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="24dp" />
 
-        <!-- Appearance -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="APPEARANCE" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -49,7 +48,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Workout Behavior -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="WORKOUT" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -96,7 +94,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Notifications -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="NOTIFICATIONS" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -134,7 +131,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Media Settings -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="MEDIA" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -178,7 +174,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Advanced / WebView Settings -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="ADVANCED (WEBVIEW)" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -192,7 +187,7 @@ app:strokeColor="?attr/colorOutlineVariant"
 app:cardBackgroundColor="?attr/colorSurface">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="16dp">
-                
+
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="12dp">
                     <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
@@ -207,7 +202,7 @@ app:cardBackgroundColor="?attr/colorSurface">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Overrides browser identity. Leave empty for default." android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:alpha="0.7" android:layout_marginBottom="8dp" />
-                
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_agent"
                     android:layout_width="match_parent"
@@ -235,7 +230,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Backup & Restore -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="BACKUP &amp; RESTORE" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -249,7 +243,7 @@ app:cardBackgroundColor="?attr/colorSurface">
             app:cardBackgroundColor="?attr/colorSurface">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="16dp">
-                
+
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Full App Backup" android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:layout_marginBottom="4dp" />
@@ -271,7 +265,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Data -->
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="DATA" android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textColor="?attr/colorPrimary" android:layout_marginBottom="8dp" />
@@ -311,7 +304,6 @@ app:cardBackgroundColor="?attr/colorSurface">
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- About -->
         <TextView android:id="@+id/tv_about_app"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="About this app" android:textAppearance="@style/TextAppearance.Material3.LabelLarge"

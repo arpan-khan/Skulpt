@@ -39,8 +39,7 @@ class RestTimerBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val argsTimer = arguments?.getInt("START_SECONDS", -1) ?: -1
-        
-        // Load saved timer duration
+
         CoroutineScope(Dispatchers.IO).launch {
             val settings = SkulptApplication.instance.database.appSettingsDao().getSettings()
             totalSeconds = if (argsTimer > 0) argsTimer else (settings?.restTimerSeconds ?: 60)
@@ -52,7 +51,6 @@ class RestTimerBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        // Setup custom duration input
         binding.etCustomDuration.doAfterTextChanged { text ->
             if (!isRunning) {
                 val input = text?.toString()?.toIntOrNull() ?: 0
@@ -66,7 +64,6 @@ class RestTimerBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        // Setup presets
         binding.chipGroupPresets.setOnCheckedStateChangeListener { group, checkedIds ->
             if (!isRunning && checkedIds.isNotEmpty()) {
                 val chip = group.findViewById<com.google.android.material.chip.Chip>(checkedIds.first())

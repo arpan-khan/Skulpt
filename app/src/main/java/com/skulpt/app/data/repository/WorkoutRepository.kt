@@ -15,7 +15,6 @@ class WorkoutRepository(
     private val sessionDao: WorkoutSessionDao
 ) {
 
-    // Days
     val allDaysWithExercises: LiveData<List<DayWithExercises>> =
         dayDao.getAllDaysWithExercisesLive()
 
@@ -29,7 +28,6 @@ class WorkoutRepository(
     suspend fun updateDay(day: WorkoutDay) = dayDao.updateDay(day)
     suspend fun deleteDay(day: WorkoutDay) = dayDao.deleteDay(day)
 
-    // Exercises
     fun getExercisesForDayLive(dayId: Long): LiveData<List<Exercise>> =
         exerciseDao.getExercisesForDayLive(dayId)
 
@@ -72,7 +70,6 @@ class WorkoutRepository(
     suspend fun updateExerciseImage(exerciseId: Long, imageUri: String?) =
         exerciseDao.updateExerciseImage(exerciseId, imageUri)
 
-    // Sessions
     val allSessions: LiveData<List<WorkoutSession>> = sessionDao.getAllSessionsLive()
     val totalSessionCount: LiveData<Int> = sessionDao.getTotalCountLive()
     val fullyCompletedCount: LiveData<Int> = sessionDao.getFullyCompletedCountLive()

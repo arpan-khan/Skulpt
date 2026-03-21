@@ -45,7 +45,7 @@ class WebViewSearchDialogFragment : DialogFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var statusText: TextView
     private lateinit var scrollView: android.widget.ScrollView
-    
+
     private var currentSettings = AppSettings()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,12 +61,12 @@ class WebViewSearchDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         webView = view.findViewById(R.id.webview_picker)
         progressBar = view.findViewById(R.id.progress_webview)
         statusText = view.findViewById(R.id.tv_webview_status)
         scrollView = view.findViewById(R.id.scroll_webview_status)
-        
+
         val btnGoogle = view.findViewById<android.widget.Button>(R.id.btn_search_google)
         val btnDDG = view.findViewById<android.widget.Button>(R.id.btn_search_ddg)
         val btnBing = view.findViewById<android.widget.Button>(R.id.btn_search_bing)
@@ -74,13 +74,13 @@ class WebViewSearchDialogFragment : DialogFragment() {
         val btnExternal = view.findViewById<android.widget.ImageButton>(R.id.btn_open_external)
 
         setupWebView()
-        
+
         btnGoogle.setOnClickListener { loadSearch("Google") }
         btnDDG.setOnClickListener { loadSearch("DDG") }
         btnBing.setOnClickListener { loadSearch("Bing") }
-        btnReload.setOnClickListener { 
+        btnReload.setOnClickListener {
             updateStatus("Reloading...")
-            webView.reload() 
+            webView.reload()
         }
         btnExternal.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webView.url ?: "https://duckduckgo.com"))
@@ -92,11 +92,9 @@ class WebViewSearchDialogFragment : DialogFragment() {
     }
 
     private fun setupWebView() {
-        // Load settings from db would be better but for now let's use defaults or pass them
-        // Actually we can just use a simple default and let user override in search
-        
+
         webView.setBackgroundColor(Color.WHITE)
-        
+
         val hwAccel = arguments?.getBoolean(ARG_HW_ACCEL, true) ?: true
         if (!hwAccel) {
             webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
@@ -112,9 +110,9 @@ class WebViewSearchDialogFragment : DialogFragment() {
             useWideViewPort = true
             loadWithOverviewMode = true
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            
+
             val ua = arguments?.getString(ARG_UA) ?: ""
-            userAgentString = if (ua.isNotEmpty()) ua 
+            userAgentString = if (ua.isNotEmpty()) ua
                 else "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
         }
 
@@ -165,10 +163,10 @@ class WebViewSearchDialogFragment : DialogFragment() {
         val baseQueryArg = queryOverride ?: arguments?.getString(ARG_QUERY) ?: ""
         val userBaseQuery = arguments?.getString(ARG_BASE_QUERY)
         val suffix = if (userBaseQuery.isNullOrBlank()) "workout" else userBaseQuery.trim()
-        
+
         val query = baseQueryArg.replace(" ", "+")
         val suffixEncoded = suffix.replace(" ", "+")
-        
+
         val url = when (provider) {
             "Google" -> "https://www.google.com/search?q=$query+$suffixEncoded&tbm=isch"
             "DDG" -> "https://duckduckgo.com/?q=$query+$suffixEncoded&iax=images&ia=images"

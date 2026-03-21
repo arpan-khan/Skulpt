@@ -51,7 +51,6 @@ class EditorExerciseAdapter(
             binding.btnDelete.setOnClickListener { onDeleteClick(exercise) }
             binding.btnDuplicate.setOnClickListener { onDuplicateClick(exercise) }
 
-            // Drag handle visual
             binding.ivDragHandle.setOnTouchListener { _, event ->
                 if (event.action == android.view.MotionEvent.ACTION_DOWN) {
                     onStartDrag(this)

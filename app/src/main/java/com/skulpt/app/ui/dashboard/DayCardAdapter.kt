@@ -17,7 +17,6 @@ class DayCardAdapter(
     private val onStartDrag: (RecyclerView.ViewHolder) -> Unit
 ) : RecyclerView.Adapter<DayCardAdapter.DayViewHolder>() {
 
-
     private var days: List<DayWithExercises> = emptyList()
 
     fun submitDays(newDays: List<DayWithExercises>) {
@@ -66,20 +65,18 @@ class DayCardAdapter(
             val progress = dayWithExercises.completionPercent
             binding.progressSpinner.progress = progress
 
-            // Color accent based on day color and completion
             try {
                 val color = Color.parseColor(day.colorHex)
                 binding.cardView.strokeColor = if (progress == 100) color else Color.TRANSPARENT
                 binding.tvDayName.setTextColor(color)
                 binding.progressSpinner.setIndicatorColor(color)
                 binding.progressSpinner.trackColor = ColorUtils.setAlphaComponent(color, 20)
-            } catch (e: Exception) { /* ignore color parse errors */ }
+            } catch (e: Exception) {  }
 
-            // Completion badge and progress text
             binding.ivCompletionBadge.visibility =
                 if (progress == 100) android.view.View.VISIBLE else android.view.View.GONE
-            
-            binding.tvProgress.visibility = 
+
+            binding.tvProgress.visibility =
                 if (progress == 100) android.view.View.GONE else android.view.View.VISIBLE
 
             binding.btnEditDay.setOnClickListener {

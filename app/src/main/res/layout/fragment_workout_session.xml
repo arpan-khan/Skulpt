@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
-                
+
                 <TextView
                     android:id="@+id/tv_day_title"
                     android:layout_width="0dp"
@@ -113,7 +113,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- STICKY TIMER TAB -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/layout_sticky_timer"
             android:layout_width="match_parent"

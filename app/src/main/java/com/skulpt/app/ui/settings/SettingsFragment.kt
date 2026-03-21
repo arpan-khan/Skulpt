@@ -116,11 +116,9 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Robust fix for status bar padding + keyboard compatibility
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            // paddingHorizontal (24dp) and paddingBottom (48dp) are already in XML
-            // We only adjust the top padding to be (statusBar + 24dp)
+
             val basePaddingTop = (24 * resources.displayMetrics.density).toInt()
             v.updatePadding(top = statusBarHeight + basePaddingTop)
             insets
@@ -142,7 +140,7 @@ class SettingsFragment : Fragment() {
 
     private fun bindSettings(s: AppSettings) {
         isBinding = true
-        // Theme
+
         binding.radioGroupTheme.setOnCheckedChangeListener(null)
         binding.radioGroupTheme.check(
             when (s.themeMode) {
@@ -153,26 +151,21 @@ class SettingsFragment : Fragment() {
         )
         setupThemeListener()
 
-        // Rest timer
         binding.sliderRestTimer.value = s.restTimerSeconds.toFloat().coerceIn(15f, 300f)
         binding.tvRestTimerValue.text = "${s.restTimerSeconds}s"
 
-        // Toggles
         binding.switchAutoScroll.isChecked = s.autoScrollExercises
         binding.switchShowImages.isChecked = s.showExerciseImages
         binding.switchReminders.isChecked = s.remindersEnabled
 
-        // Reminder time
         updateReminderTimeUI(s.reminderHour, s.reminderMinute)
         binding.layoutReminderTime.visibility =
             if (s.remindersEnabled) View.VISIBLE else View.GONE
 
-        // Media
         if (!binding.etDefaultQuery.hasFocus() && binding.etDefaultQuery.text.toString() != s.defaultImageQuery) {
             binding.etDefaultQuery.setText(s.defaultImageQuery)
         }
 
-        // Advanced
         binding.switchHwAccel.isChecked = s.webViewHardwareAcceleration
         if (!binding.etUserAgent.hasFocus() && binding.etUserAgent.text.toString() != s.customUserAgent) {
             binding.etUserAgent.setText(s.customUserAgent)
@@ -284,7 +277,6 @@ class SettingsFragment : Fragment() {
             ).show()
         }
 
-        // Backup & Restore
         binding.btnExportBackup.setOnClickListener {
             val dateStr = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
             exportBackupLauncher.launch("SkulptBackup_$dateStr.bak")
@@ -301,7 +293,6 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
-        // Data management
         binding.btnExport.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val uri = ImportExportUtil.exportFull(requireContext())
@@ -385,14 +376,13 @@ class SettingsFragment : Fragment() {
     private fun resetWebViewData() {
         android.webkit.CookieManager.getInstance().removeAllCookies(null)
         android.webkit.CookieManager.getInstance().flush()
-        
-        // Clearing WebView data requires a context
+
         val webView = android.webkit.WebView(requireContext())
         webView.clearCache(true)
         webView.clearFormData()
         webView.clearHistory()
         webView.clearSslPreferences()
-        
+
         Toast.makeText(requireContext(), "WebView cleared! Re-try the search now.", Toast.LENGTH_LONG).show()
     }
 

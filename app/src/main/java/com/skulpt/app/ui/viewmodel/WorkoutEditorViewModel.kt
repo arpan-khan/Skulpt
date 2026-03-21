@@ -36,7 +36,7 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
         viewModelScope.launch {
             val settings = db.appSettingsDao().getSettings()
             _defaultImageQuery.postValue(settings?.defaultImageQuery ?: "")
-            
+
             val dayWithExercises = repository.getDayWithExercises(dayId)
             _dayName.postValue(dayWithExercises?.day?.name ?: "")
             _dayColor.postValue(dayWithExercises?.day?.colorHex ?: "#6750A4")
@@ -105,7 +105,7 @@ class WorkoutEditorViewModel(application: Application) : AndroidViewModel(applic
         val current = _exercises.value?.toMutableList() ?: return
         val item = current.removeAt(fromIndex)
         current.add(toIndex, item)
-        // We still update the LiveData but the Activity will skip submitList if isDragging is true
+
         _exercises.value = current.toList()
     }
 

@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// DTOs for import/export JSON structure
 data class ExportData(
     @SerializedName("version") val version: Int = 1,
     @SerializedName("exportDate") val exportDate: String,
@@ -48,17 +47,12 @@ object ImportExportUtil {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    /**
-     * Export the full weekly schedule (days 0–6) to a JSON file in Downloads.
-     * Returns the Uri of the written file, or null on failure.
-     */
     suspend fun exportFull(context: Context): Uri? {
         return withContext(Dispatchers.IO) {
             try {
                 val db = com.skulpt.app.SkulptApplication.instance.database
                 val exportDays = mutableListOf<ExportDay>()
 
-                // Fetch all standard days in one suspend query (correct — no LiveData in IO)
                 val allDaysWithEx = db.workoutDayDao().getAllDaysWithExercises()
 
                 for (dayWithEx in allDaysWithEx) {
@@ -95,10 +89,6 @@ object ImportExportUtil {
         }
     }
 
-    /**
-     * Import a schedule JSON from the given Uri, merging into the database.
-     * Matches days by dayIndex (not by auto-generated ID). Returns true on success.
-     */
     suspend fun importSchedule(context: Context, uri: Uri): Boolean {
         return withContext(Dispatchers.IO) {
             try {
@@ -113,34 +103,30 @@ object ImportExportUtil {
         }
     }
 
-    /**
-     * Import a schedule JSON from a raw string, merging into the database.
-     */
     suspend fun importScheduleFromJson(json: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val exportData = gson.fromJson(json, ExportData::class.java)
                     ?: return@withContext false
-                
+
                 val db = com.skulpt.app.SkulptApplication.instance.database
                 val dayDao = db.workoutDayDao()
                 val exerciseDao = db.exerciseDao()
 
                 for (exportDay in exportData.days) {
-                    // Look up the day by its semantic dayIndex (0=Mon…6=Sun), not by Room ID
+
                     val existingDay = dayDao.getDayByIndex(exportDay.dayIndex)
 
                     val dayId = if (existingDay != null) {
-                        // Update day name / color, then replace its exercises
+
                         dayDao.updateDay(existingDay.copy(name = exportDay.name, colorHex = exportDay.colorHex))
                         exerciseDao.deleteAllExercisesForDay(existingDay.id)
                         existingDay.id
                     } else {
-                        // Day doesn't exist yet — insert it
+
                         dayDao.insertDay(WorkoutDay(dayIndex = exportDay.dayIndex, name = exportDay.name, colorHex = exportDay.colorHex))
                     }
 
-                    // Insert exercises for this day
                     val exercises = exportDay.exercises.mapIndexed { idx, ex ->
                         Exercise(
                             dayId = dayId,

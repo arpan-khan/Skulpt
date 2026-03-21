@@ -35,12 +35,12 @@ class WorkoutEditorActivity : AppCompatActivity() {
         ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            // Grant persistent permission
+
             try {
                 contentResolver.takePersistableUriPermission(
                     it, Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-            } catch (e: Exception) { /* not all URIs support this */ }
+            } catch (e: Exception) {  }
             pendingImageExerciseId?.let { exId ->
                 viewModel.updateExerciseImage(exId, it.toString())
             }
@@ -102,12 +102,11 @@ class WorkoutEditorActivity : AppCompatActivity() {
             ): Boolean {
                 val from = viewHolder.bindingAdapterPosition
                 val to = target.bindingAdapterPosition
-                
-                // Locally swap items in the adapter's list for immediate visual feedback
+
                 val list = adapter.currentList.toMutableList()
                 val movedItem = list.removeAt(from)
                 list.add(to, movedItem)
-                // We use notifyItemMoved for the animation, but we also update the ViewModel's state
+
                 viewModel.moveExerciseStateOnly(from, to)
                 adapter.notifyItemMoved(from, to)
                 return true
@@ -232,10 +231,10 @@ class WorkoutEditorActivity : AppCompatActivity() {
         val dialog = com.skulpt.app.ui.session.WebViewSearchDialogFragment.newInstance(
             exercise.name,
             viewModel.defaultImageQuery.value,
-            true, // acceleration
-            ""   // user agent
+            true,
+            ""
         )
-        
+
         supportFragmentManager.setFragmentResultListener(
             com.skulpt.app.ui.session.WebViewSearchDialogFragment.REQUEST_KEY,
             this
@@ -246,7 +245,7 @@ class WorkoutEditorActivity : AppCompatActivity() {
                 Toast.makeText(this, "Image selected!", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         dialog.show(supportFragmentManager, com.skulpt.app.ui.session.WebViewSearchDialogFragment.TAG)
     }
 

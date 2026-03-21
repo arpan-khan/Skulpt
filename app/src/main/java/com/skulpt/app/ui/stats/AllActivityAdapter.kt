@@ -32,7 +32,7 @@ class AllActivityAdapter(
 
         fun bind(session: WorkoutSession) {
             binding.tvDayName.text = session.dayName
-            
+
             val sdf = SimpleDateFormat("EEEE, MMM d", Locale.getDefault())
             binding.tvDate.text = sdf.format(Date(session.dateMillis))
 

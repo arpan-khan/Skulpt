@@ -33,7 +33,7 @@ class ImageSearchAdapter(
             .skipMemoryCache(true)
             .centerCrop()
             .into(holder.binding.ivResult)
-        
+
         holder.binding.root.setOnClickListener { onImageSelected(url) }
     }
 

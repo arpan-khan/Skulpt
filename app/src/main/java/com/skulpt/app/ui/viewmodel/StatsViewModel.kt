@@ -45,8 +45,7 @@ class StatsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateSession(session: WorkoutSession) {
         viewModelScope.launch {
-            // We need an update method in repo/dao. Let's add it.
-            // For now, insert(REPLACE) might work if ID is set.
+
             workoutRepo.insertSession(session)
             loadStats()
         }

@@ -9,10 +9,6 @@ import java.util.UUID
 
 object FileUtil {
 
-    /**
-     * Copies the content of a Uri to the app's internal "images" directory.
-     * Returns the absolute path of the new local file, or null on failure.
-     */
     fun saveUriToInternalStorage(context: Context, uri: Uri): String? {
         val contentResolver = context.contentResolver
         val inputStream: InputStream? = try {
@@ -30,7 +26,6 @@ object FileUtil {
                 imageDir.mkdirs()
             }
 
-            // Generate a unique filename to avoid collisions
             val extension = getExtensionFromUri(context, uri) ?: "jpg"
             val fileName = "custom_${UUID.randomUUID()}.$extension"
             val outputFile = File(imageDir, fileName)
@@ -54,9 +49,6 @@ object FileUtil {
         }
     }
 
-    /**
-     * Deletes a local file if it exists.
-     */
     fun deleteLocalFile(path: String) {
         try {
             val file = File(path)
