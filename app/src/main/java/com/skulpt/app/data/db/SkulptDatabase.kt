@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [WorkoutDay::class, Exercise::class, WorkoutSession::class, AppSettings::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class SkulptDatabase : RoomDatabase() {
@@ -41,7 +41,7 @@ abstract class SkulptDatabase : RoomDatabase() {
                     "skulpt_database"
                 )
                     .addCallback(DatabaseCallback())
-                    .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
@@ -52,6 +52,34 @@ abstract class SkulptDatabase : RoomDatabase() {
         val MIGRATION_4_5 = object : androidx.room.migration.Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE exercises ADD COLUMN hexcolor TEXT NOT NULL DEFAULT '#6750A4'")
+            }
+        }
+
+        val MIGRATION_5_6 = object : androidx.room.migration.Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Add new columns to 'exercises' if they are missing
+                // Note: Room is strict, but ALTER TABLE is usually safe
+                try { db.execSQL("ALTER TABLE exercises ADD COLUMN completedSets INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
+                try { db.execSQL("ALTER TABLE exercises ADD COLUMN lastTrackedSets INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
+                try { db.execSQL("ALTER TABLE exercises ADD COLUMN timerSeconds INTEGER NOT NULL DEFAULT 0") } catch(e: Exception){}
+                try { db.execSQL("ALTER TABLE exercises ADD COLUMN notes TEXT NOT NULL DEFAULT ''") } catch(e: Exception){}
+
+                // Create 'workout_sessions' table with correct SQLite syntax
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `workout_sessions` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `dayId` INTEGER NOT NULL, 
+                        `dayName` TEXT NOT NULL, 
+                        `dateMillis` INTEGER NOT NULL, 
+                        `totalExercises` INTEGER NOT NULL, 
+                        `completedExercises` INTEGER NOT NULL, 
+                        `totalSets` INTEGER NOT NULL DEFAULT 0, 
+                        `completedSets` INTEGER NOT NULL DEFAULT 0, 
+                        `totalReps` INTEGER NOT NULL DEFAULT 0, 
+                        `completedReps` INTEGER NOT NULL DEFAULT 0, 
+                        `durationSeconds` INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
             }
         }
     }

@@ -34,66 +34,74 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         val sessions = workoutRepository.getAllSessionsOnce()
             .sortedByDescending { it.dateMillis }
 
-        val totalWorkouts = sessions.size
-        val totalExCompleted = sessions.sumOf { it.completedExercises }
-        val totalSetsCompleted = sessions.sumOf { it.completedSets }
-        val totalRepsCompleted = sessions.sumOf { it.completedReps }
-        val totalTimeSeconds = sessions.sumOf { it.durationSeconds }
+        if (sessions.isEmpty()) {
+            return StatsData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, emptyMap(), emptyList(), emptyList(), emptyMap())
+        }
 
-        val (currentStreak, longestStreak) = calculateStreaks(sessions)
+        var totalExCompleted = 0
+        var totalSetsCompleted = 0
+        var totalRepsCompleted = 0
+        var totalTimeSeconds = 0L
         
-        // Heatmap: Map of DayStartMillis -> Count
-        val activeDaysMap = sessions.groupBy { normalizeToDay(it.dateMillis) }
-            .mapValues { (_, sList) -> sList.size }
-        
-        val weeklyActivity = calculateWeeklyActivity(sessions)
-        
+        val activeDaysMap = mutableMapOf<Long, Int>()
+        val cal = Calendar.getInstance()
         val now = Calendar.getInstance()
+        val nowMillis = now.timeInMillis
+        val todayStart = normalizeToDay(nowMillis)
+        
+        val currentYear = now.get(Calendar.YEAR)
+        val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
+        val currentMonth = now.get(Calendar.MONTH)
+
         var timeTodaySeconds = 0L
         var longestSessionTimeSeconds = 0L
         var timeThisWeekSeconds = 0L
         var timeThisMonthSeconds = 0L
-        
         var workoutsThisWeek = 0
         var workoutsThisMonth = 0
-        
+
+        val distribution = mutableMapOf<String, Int>()
+
         sessions.forEach {
-            val sessionCal = Calendar.getInstance().apply { timeInMillis = it.dateMillis }
+            totalExCompleted += it.completedExercises
+            totalSetsCompleted += it.completedSets
+            totalRepsCompleted += it.completedReps
+            totalTimeSeconds += it.durationSeconds
+            
+            val dayStart = normalizeToDay(it.dateMillis)
+            activeDaysMap[dayStart] = (activeDaysMap[dayStart] ?: 0) + 1
+            
+            cal.timeInMillis = it.dateMillis
             val dur = it.durationSeconds
+            if (dur > longestSessionTimeSeconds) longestSessionTimeSeconds = dur
             
-            if (dur > longestSessionTimeSeconds) {
-                longestSessionTimeSeconds = dur
+            if (dayStart == todayStart) timeTodaySeconds += dur
+            
+            if (cal.get(Calendar.YEAR) == currentYear) {
+                if (cal.get(Calendar.WEEK_OF_YEAR) == currentWeek) {
+                    workoutsThisWeek++
+                    timeThisWeekSeconds += dur
+                }
+                if (cal.get(Calendar.MONTH) == currentMonth) {
+                    workoutsThisMonth++
+                    timeThisMonthSeconds += dur
+                }
             }
             
-            val isToday = normalizeToDay(sessionCal.timeInMillis) == normalizeToDay(now.timeInMillis)
-            if (isToday) {
-                timeTodaySeconds += dur
-            }
-            
-            val isThisWeek = sessionCal.get(Calendar.WEEK_OF_YEAR) == now.get(Calendar.WEEK_OF_YEAR) &&
-                             sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
-            if (isThisWeek) {
-                workoutsThisWeek++
-                timeThisWeekSeconds += dur
-            }
-            
-            val isThisMonth = sessionCal.get(Calendar.MONTH) == now.get(Calendar.MONTH) &&
-                              sessionCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
-            if (isThisMonth) {
-                workoutsThisMonth++
-                timeThisMonthSeconds += dur
+            if (it.completedExercises > 0) {
+                distribution[it.dayName] = (distribution[it.dayName] ?: 0) + it.completedExercises
             }
         }
 
-        // Consistency: % of scheduled days worked out in the last 30 days
+        val streaks = calculateStreaks(sessions)
+        val weeklyActivity = calculateWeeklyActivity(sessions)
         val consistencyPercent = calculateConsistency(sessions)
 
-        val distribution = sessions.groupBy { it.dayName }
-            .mapValues { (_, sList) -> sList.sumOf { it.completedExercises } }
-            .filterValues { it > 0 }
+        val tenDaysAgo = nowMillis - TimeUnit.DAYS.toMillis(10)
+        val filteredRecentSessions = sessions.filter { it.dateMillis >= tenDaysAgo }
 
         return StatsData(
-            totalWorkouts = totalWorkouts,
+            totalWorkouts = sessions.size,
             totalExCompleted = totalExCompleted,
             totalSetsCompleted = totalSetsCompleted,
             totalRepsCompleted = totalRepsCompleted,
@@ -102,13 +110,13 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
             longestSessionTimeSeconds = longestSessionTimeSeconds,
             timeThisWeekSeconds = timeThisWeekSeconds,
             timeThisMonthSeconds = timeThisMonthSeconds,
-            currentStreak = currentStreak,
-            longestStreak = longestStreak,
+            currentStreak = streaks.first,
+            longestStreak = streaks.second,
             workoutsThisWeek = workoutsThisWeek,
             workoutsThisMonth = workoutsThisMonth,
             consistencyPercent = consistencyPercent,
             heatmapData = activeDaysMap,
-            recentSessions = sessions.take(10),
+            recentSessions = filteredRecentSessions,
             weeklyActivity = weeklyActivity,
             exerciseDistribution = distribution
         )
@@ -119,15 +127,16 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
         val activity = mutableListOf<ActivityPoint>()
         val dayLabels = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
-        // Last 7 days
         for (i in 6 downTo 0) {
-            val d = Calendar.getInstance()
-            d.add(Calendar.DAY_OF_YEAR, -i)
-            val dayStart = normalizeToDay(d.timeInMillis)
+            cal.apply {
+                timeInMillis = System.currentTimeMillis()
+                add(Calendar.DAY_OF_YEAR, -i)
+            }
+            val dayStart = normalizeToDay(cal.timeInMillis)
             val dayEnd = dayStart + TimeUnit.DAYS.toMillis(1)
             
-            val count = sessions.count { it.dateMillis in dayStart until dayEnd }
-            val label = dayLabels[d.get(Calendar.DAY_OF_WEEK) - 1]
+            val count = sessions.filter { it.dateMillis in dayStart until dayEnd }.sumOf { it.completedSets }
+            val label = dayLabels[cal.get(Calendar.DAY_OF_WEEK) - 1]
             activity.add(ActivityPoint(label, count))
         }
         return activity
@@ -136,49 +145,46 @@ class StatsRepository(private val workoutRepository: WorkoutRepository) {
     private fun calculateStreaks(sessions: List<WorkoutSession>): Pair<Int, Int> {
         if (sessions.isEmpty()) return 0 to 0
 
-        // Get unique workout dates as Calendar objects
+        val cal = Calendar.getInstance()
         val workoutDays = sessions
             .map { 
-                val cal = Calendar.getInstance()
                 cal.timeInMillis = it.dateMillis
-                normalizeToDay(cal)
-                cal
+                normalizeToDay(cal.timeInMillis)
             }
-            .distinctBy { it.timeInMillis }
-            .sortedByDescending { it.timeInMillis }
+            .distinct()
+            .sortedByDescending { it }
 
-        val today = Calendar.getInstance()
-        normalizeToDay(today)
-        val yesterday = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }
+        val today = normalizeToDay(System.currentTimeMillis())
+        val yesterday = today - TimeUnit.DAYS.toMillis(1)
 
-        // Current streak: consecutive days ending today or yesterday
         var currentStreak = 0
-        var expectedPrev = today.clone() as Calendar
-
-        if (workoutDays.isNotEmpty() && (workoutDays[0].timeInMillis == today.timeInMillis || workoutDays[0].timeInMillis == yesterday.timeInMillis)) {
-            expectedPrev = workoutDays[0].clone() as Calendar
-            currentStreak = 1
-            for (i in 1 until workoutDays.size) {
-                expectedPrev.add(Calendar.DAY_OF_YEAR, -1)
-                if (workoutDays[i].timeInMillis == expectedPrev.timeInMillis) {
-                    currentStreak++
-                } else break
+        if (workoutDays.isNotEmpty() && (workoutDays[0] == today || workoutDays[1] == yesterday)) { // corrected index check
+            // Actually simpler to just check if first day is today or yesterday
+            val startDay = if (workoutDays[0] == today || workoutDays[0] == yesterday) workoutDays[0] else -1L
+            if (startDay != -1L) {
+                currentStreak = 1
+                var lastDay = startDay
+                for (i in 1 until workoutDays.size) {
+                    if (workoutDays[i] == lastDay - TimeUnit.DAYS.toMillis(1)) {
+                        currentStreak++
+                        lastDay = workoutDays[i]
+                    } else break
+                }
             }
         }
 
-        // Longest streak
         var longestStreak = 0
         var runStreak = 1
-        val sortedAsc = workoutDays.reversed()
+        val sortedAsc = workoutDays.sorted()
         for (i in 1 until sortedAsc.size) {
-            val expectedNext = (sortedAsc[i - 1].clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, 1) }
-            if (sortedAsc[i].timeInMillis == expectedNext.timeInMillis) {
+            if (sortedAsc[i] == sortedAsc[i - 1] + TimeUnit.DAYS.toMillis(1)) {
                 runStreak++
-                if (runStreak > longestStreak) longestStreak = runStreak
             } else {
+                if (runStreak > longestStreak) longestStreak = runStreak
                 runStreak = 1
             }
         }
+        if (runStreak > longestStreak) longestStreak = runStreak
         if (sortedAsc.isNotEmpty() && longestStreak == 0) longestStreak = 1
         return currentStreak to longestStreak
     }

@@ -87,6 +87,9 @@ class WorkoutSessionFragment : Fragment() {
                     }
                 }
             },
+            onIncrementToggle = { exercise ->
+                viewModel.incrementExerciseSet(exercise)
+            },
             onImageClick = { exercise ->
                 showImageActions(exercise)
             },
@@ -116,17 +119,20 @@ class WorkoutSessionFragment : Fragment() {
             binding.progressBar.progress = percent
             binding.tvProgress.text = "$completed / $total exercises completed"
 
-            // Bind hero image based on first exercise or general query
+            // Bind hero image only if search query changed
             val firstExercise = dayWithEx.exercises.sortedBy { it.orderIndex }.firstOrNull()
             val heroQuery = firstExercise?.name ?: dayWithEx.day.name
             val baseQuery = viewModel.settings.value?.defaultImageQuery
             val heroUrl = com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(heroQuery, baseQuery)
             
-            com.bumptech.glide.Glide.with(this)
-                .load(heroUrl)
-                .centerCrop()
-                .placeholder(com.skulpt.app.R.drawable.bg_image_rounded)
-                .into(binding.ivHero)
+            if (binding.ivHero.tag != heroUrl) {
+                binding.ivHero.tag = heroUrl
+                com.bumptech.glide.Glide.with(this)
+                    .load(heroUrl)
+                    .centerCrop()
+                    .placeholder(com.skulpt.app.R.drawable.bg_image_rounded)
+                    .into(binding.ivHero)
+            }
 
             adapter.submitExercises(dayWithEx.exercises.sortedBy { it.orderIndex })
 
@@ -136,6 +142,7 @@ class WorkoutSessionFragment : Fragment() {
                 binding.cardAllDone.visibility = View.GONE
             }
 
+            // Only start rotation if not already running for this set of images
             startHeroRotation(dayWithEx.exercises)
         }
 
@@ -154,7 +161,7 @@ class WorkoutSessionFragment : Fragment() {
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            showFinishDialog()
+            findNavController().popBackStack()
         }
 
         binding.toolbar.inflateMenu(com.skulpt.app.R.menu.menu_session)
@@ -182,21 +189,20 @@ class WorkoutSessionFragment : Fragment() {
         }
 
         binding.btnFinishWorkout.setOnClickListener {
-            showFinishDialog()
+            val dayWithEx = viewModel.dayWithExercises.value ?: return@setOnClickListener
+            viewModel.saveSession(dayWithEx)
         }
 
         viewModel.isSessionActive.observe(viewLifecycleOwner) { active ->
             if (active) {
                 binding.btnStartStopWorkout.text = "Pause"
                 binding.btnStartStopWorkout.setIconResource(com.skulpt.app.R.drawable.ic_stop)
-                binding.btnFinishWorkout.visibility = View.VISIBLE
             } else {
                 binding.btnStartStopWorkout.text = "Start"
                 binding.btnStartStopWorkout.setIconResource(com.skulpt.app.R.drawable.ic_play)
-                // If elapsed time > 0, we can still show finish
-                val hasProgress = (viewModel.elapsedTimeSeconds.value ?: 0) > 0
-                binding.btnFinishWorkout.visibility = if (hasProgress) View.VISIBLE else View.GONE
             }
+            // Keep Track button visible if we have any progress or a session is active
+            binding.btnFinishWorkout.visibility = View.VISIBLE
         }
 
         viewModel.elapsedTimeSeconds.observe(viewLifecycleOwner) { seconds ->
@@ -266,26 +272,6 @@ class WorkoutSessionFragment : Fragment() {
             .show()
     }
 
-    private fun showFinishDialog() {
-        val dayWithEx = viewModel.dayWithExercises.value ?: run {
-            findNavController().popBackStack()
-            return
-        }
-        
-        // Pause timer while dialog is shown
-        viewModel.stopSession()
-
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Finish Workout?")
-            .setMessage("Save progress for ${dayWithEx.day.name}?")
-            .setPositiveButton("Save") { _, _ ->
-                viewModel.saveSession(dayWithEx)
-            }
-            .setNegativeButton("Discard") { _, _ ->
-                findNavController().popBackStack()
-            }
-            .show()
-    }
 
     private fun showInternetSearchDialog(exercise: Exercise) {
         val settings = viewModel.settings.value ?: com.skulpt.app.data.model.AppSettings()
@@ -313,15 +299,21 @@ class WorkoutSessionFragment : Fragment() {
     // Removed showSearchResultsDialog as it's merged into showInternetSearchDialog
 
     private fun startHeroRotation(exercises: List<Exercise>) {
-        heroRotationJob?.cancel()
-        if (exercises.isEmpty()) return
-
         val imageUrls = exercises.map { ex ->
             if (!ex.imageUri.isNullOrEmpty()) ex.imageUri
             else com.skulpt.app.util.PlaceholderUtil.getDynamicImageUrl(ex.name, viewModel.settings.value?.defaultImageQuery ?: "")
         }.filterNotNull().distinct()
 
-        if (imageUrls.size <= 1) return
+        if (imageUrls.size <= 1) {
+            heroRotationJob?.cancel()
+            return
+        }
+        
+        // Don't restart if already rotating same images
+        if (heroRotationJob?.isActive == true && binding.ivHero.tag == "ROTATING_${imageUrls.hashCode()}") return
+        
+        heroRotationJob?.cancel()
+        binding.ivHero.tag = "ROTATING_${imageUrls.hashCode()}"
 
         heroRotationJob = viewLifecycleOwner.lifecycleScope.launch {
             while (true) {

@@ -27,6 +27,8 @@ data class Exercise(
     val imageUri: String? = null,
     val orderIndex: Int = 0,
     val isCompleted: Boolean = false,
+    val completedSets: Int = 0,
+    val lastTrackedSets: Int = 0,
     val timerSeconds: Int = 0,    // 0 = no timer
     val hexcolor: String = "#6750A4",
     val notes: String = ""

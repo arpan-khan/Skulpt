@@ -167,14 +167,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Finish"
-                    android:visibility="gone"
+                    android:text="Track"
+                    android:visibility="visible"
                     app:icon="@drawable/ic_check"
                     style="@style/Widget.Material3.Button"
                     app:backgroundTint="#2E7D32"
                     android:textColor="@android:color/white"
-                    app:iconTint="@android:color/white"
-                    tools:visibility="visible" />
+                    app:iconTint="@android:color/white" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

@@ -54,6 +54,12 @@ class WorkoutRepository(
     suspend fun setExerciseCompleted(exerciseId: Long, completed: Boolean) =
         exerciseDao.setCompleted(exerciseId, completed)
 
+    suspend fun updateExerciseCompletedSets(exerciseId: Long, sets: Int) =
+        exerciseDao.updateCompletedSets(exerciseId, sets)
+
+    suspend fun updateExerciseLastTrackedSets(exerciseId: Long, sets: Int) =
+        exerciseDao.updateLastTrackedSets(exerciseId, sets)
+
     suspend fun resetDayCompletion(dayId: Long) =
         exerciseDao.resetCompletionForDay(dayId)
 
@@ -76,6 +82,9 @@ class WorkoutRepository(
 
     suspend fun getAllSessionsOnce(): List<WorkoutSession> =
         sessionDao.getAllSessions()
+
+    suspend fun deleteSession(session: WorkoutSession) =
+        sessionDao.deleteSession(session)
 
     suspend fun deleteAllSessions() = sessionDao.deleteAllSessions()
 

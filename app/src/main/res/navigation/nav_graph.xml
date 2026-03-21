@@ -48,7 +48,21 @@
         android:id="@+id/statsFragment"
         android:name="com.skulpt.app.ui.stats.StatsFragment"
         android:label="Stats"
-        tools:layout="@layout/fragment_stats" />
+        tools:layout="@layout/fragment_stats">
+        <action
+            android:id="@+id/action_stats_to_allActivity"
+            app:destination="@id/allActivityFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/allActivityFragment"
+        android:name="com.skulpt.app.ui.stats.AllActivityFragment"
+        android:label="All Activity"
+        tools:layout="@layout/fragment_all_activity" />
 
     <fragment
         android:id="@+id/settingsFragment"

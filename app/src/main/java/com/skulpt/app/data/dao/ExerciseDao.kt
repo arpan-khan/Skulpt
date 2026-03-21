@@ -31,13 +31,19 @@ interface ExerciseDao {
     @Query("DELETE FROM exercises WHERE dayId = :dayId")
     suspend fun deleteAllExercisesForDay(dayId: Long)
 
-    @Query("UPDATE exercises SET isCompleted = :completed WHERE id = :exerciseId")
+    @Query("UPDATE exercises SET isCompleted = :completed, completedSets = CASE WHEN :completed = 1 THEN sets ELSE completedSets END WHERE id = :exerciseId")
     suspend fun setCompleted(exerciseId: Long, completed: Boolean)
 
-    @Query("UPDATE exercises SET isCompleted = 0 WHERE dayId = :dayId")
+    @Query("UPDATE exercises SET completedSets = :sets, isCompleted = CASE WHEN :sets >= sets THEN 1 ELSE 0 END WHERE id = :exerciseId")
+    suspend fun updateCompletedSets(exerciseId: Long, sets: Int)
+
+    @Query("UPDATE exercises SET lastTrackedSets = :sets WHERE id = :exerciseId")
+    suspend fun updateLastTrackedSets(exerciseId: Long, sets: Int)
+
+    @Query("UPDATE exercises SET isCompleted = 0, completedSets = 0, lastTrackedSets = 0 WHERE dayId = :dayId")
     suspend fun resetCompletionForDay(dayId: Long)
 
-    @Query("UPDATE exercises SET isCompleted = 0")
+    @Query("UPDATE exercises SET isCompleted = 0, completedSets = 0, lastTrackedSets = 0")
     suspend fun resetAllCompletion()
 
     @Query("UPDATE exercises SET orderIndex = :orderIndex WHERE id = :exerciseId")

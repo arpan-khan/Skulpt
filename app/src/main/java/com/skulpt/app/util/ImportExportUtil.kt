@@ -35,12 +35,12 @@ data class ExportDay(
 )
 
 data class ExportExercise(
-    @SerializedName("name") val name: String,
-    @SerializedName("sets") val sets: Int,
-    @SerializedName("reps") val reps: Int,
-    @SerializedName("orderIndex") val orderIndex: Int,
-    @SerializedName("notes") val notes: String,
-    @SerializedName("timerSeconds") val timerSeconds: Int,
+    @SerializedName("name") val name: String = "",
+    @SerializedName("sets") val sets: Int = 3,
+    @SerializedName("reps") val reps: Int = 10,
+    @SerializedName("orderIndex") val orderIndex: Int = 0,
+    @SerializedName("notes") val notes: String = "",
+    @SerializedName("timerSeconds") val timerSeconds: Int = 0,
     @SerializedName("hexcolor") val hexcolor: String = "#6750A4"
 )
 
@@ -144,13 +144,16 @@ object ImportExportUtil {
                     val exercises = exportDay.exercises.mapIndexed { idx, ex ->
                         Exercise(
                             dayId = dayId,
-                            name = ex.name,
-                            sets = ex.sets,
-                            reps = ex.reps,
+                            name = ex.name.ifBlank { "Untitled" },
+                            sets = if (ex.sets > 0) ex.sets else 3,
+                            reps = if (ex.reps > 0) ex.reps else 10,
                             orderIndex = ex.orderIndex.takeIf { it >= 0 } ?: idx,
-                            notes = ex.notes,
-                            timerSeconds = ex.timerSeconds,
-                            hexcolor = ex.hexcolor
+                            notes = ex.notes ?: "",
+                            timerSeconds = ex.timerSeconds ?: 0,
+                            hexcolor = if (!ex.hexcolor.isNullOrBlank()) ex.hexcolor else "#6750A4",
+                            completedSets = 0,
+                            lastTrackedSets = 0,
+                            isCompleted = false
                         )
                     }
                     exerciseDao.insertExercises(exercises)

@@ -18,6 +18,7 @@ import com.skulpt.app.util.PlaceholderUtil
 
 class ExerciseCardAdapter(
     private val onCheckToggle: (Exercise) -> Unit,
+    private val onIncrementToggle: (Exercise) -> Unit,
     private val onImageClick: (Exercise) -> Unit,
     private val onTimerClick: (Exercise) -> Unit
 ) : RecyclerView.Adapter<ExerciseCardAdapter.ExerciseViewHolder>() {
@@ -80,6 +81,15 @@ class ExerciseCardAdapter(
                 binding.checkBox.isChecked = false
             }
 
+            // Set Progress
+            binding.setProgressBar.max = exercise.sets
+            binding.setProgressBar.progress = exercise.completedSets
+            binding.tvSetsReps.text = "${exercise.completedSets}/${exercise.sets} sets × ${exercise.reps} reps"
+            
+            binding.btnIncrementSet.setOnClickListener {
+                onIncrementToggle(exercise)
+            }
+
             // Accent Color (Text)
             try {
                 val colorInt = android.graphics.Color.parseColor(exercise.hexcolor)
@@ -121,16 +131,20 @@ class ExerciseCardAdapter(
                 }
             }
 
-            // Staggered entrance animation
-            binding.root.translationY = 60f
-            binding.root.alpha = 0f
-            binding.root.animate()
-                .translationY(0f)
-                .alpha(if (exercise.isCompleted) 0.55f else 1f)
-                .setStartDelay((position * 50L).coerceAtMost(300L))
-                .setDuration(250)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
+            // Staggered entrance animation (only once)
+            if (binding.root.alpha == 0f || binding.root.translationY != 0f) {
+                binding.root.translationY = 40f
+                binding.root.alpha = 0f
+                binding.root.animate()
+                    .translationY(0f)
+                    .alpha(if (exercise.isCompleted) 0.55f else 1f)
+                    .setStartDelay((position * 30L).coerceAtMost(200L))
+                    .setDuration(250)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
+            } else {
+                binding.root.alpha = if (exercise.isCompleted) 0.55f else 1f
+            }
 
             binding.checkBox.setOnClickListener {
                 onCheckToggle(exercise)

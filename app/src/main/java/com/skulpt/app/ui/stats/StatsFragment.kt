@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.skulpt.app.databinding.FragmentStatsBinding
 import com.skulpt.app.ui.viewmodel.StatsViewModel
+import androidx.navigation.fragment.findNavController
+import com.skulpt.app.R
 import android.graphics.Color
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -81,6 +83,10 @@ class StatsFragment : Fragment() {
             viewModel.loadStats()
             binding.swipeRefresh.isRefreshing = false
         }
+
+        binding.btnViewAllActivity.setOnClickListener {
+            findNavController().navigate(R.id.action_stats_to_allActivity)
+        }
     }
 
     override fun onResume() {
@@ -97,11 +103,11 @@ class StatsFragment : Fragment() {
             description.isEnabled = false
             legend.isEnabled = true
             legend.horizontalAlignment = com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.CENTER
-            legend.textColor = Color.GRAY
+            legend.textColor = if (isDarkMode()) Color.WHITE else Color.GRAY
             holeRadius = 65f
             setHoleColor(Color.TRANSPARENT)
             setDrawEntryLabels(true)
-            setEntryLabelColor(Color.BLACK)
+            setEntryLabelColor(if (isDarkMode()) Color.WHITE else Color.BLACK)
             setEntryLabelTextSize(12f)
         }
         binding.barChart.apply {
@@ -109,7 +115,9 @@ class StatsFragment : Fragment() {
             legend.isEnabled = false
             xAxis.setDrawGridLines(false)
             xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
+            xAxis.textColor = if (isDarkMode()) Color.WHITE else Color.GRAY
             axisLeft.setDrawGridLines(false)
+            axisLeft.textColor = if (isDarkMode()) Color.WHITE else Color.GRAY
             axisRight.isEnabled = false
         }
     }
@@ -216,7 +224,10 @@ class StatsFragment : Fragment() {
         binding.barChart.apply {
             xAxis.valueFormatter = IndexAxisValueFormatter(data.weeklyActivity.map { it.label })
             xAxis.labelCount = data.weeklyActivity.size
-            this.data = BarData(barDataSet)
+            barDataSet.valueTextColor = if (isDarkMode()) Color.WHITE else Color.BLACK
+            this.data = BarData(barDataSet).apply {
+                setValueTextColor(if (isDarkMode()) Color.WHITE else Color.BLACK)
+            }
             invalidate()
         }
     }
